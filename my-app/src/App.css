@@ -1,0 +1,105 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+
+  height: 100%;
+  background-color: #081313;
+}
+
+.letterTile {
+
+  position:relative;
+  display: inline-block;
+  padding:10px;
+  height: 20px;
+  width: 20px;
+  z-index: 9;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3;
+  background-color: yellow;
+  cursor:pointer;
+  user-select: none;
+}
+
+.letterPoint {
+	font-size: 11px;
+    position: relative;
+    bottom: 1px;
+    right: -12px;
+}
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  text-align: center;
+  padding: 4px;
+  width: 38px;
+  height: 38px;
+}
+
+.grid-item-double-word {
+
+	background-color: pink;
+}
+.grid-item-double-word:before{
+	
+	content: '2xWord';
+	font-size:11px;
+}
+.grid-item-triple-word {
+
+	background-color: red;
+}
+.grid-item-double-letter {
+
+	background-color: cyan;
+}
+.grid-item-triple-letter {
+
+	background-color: blue;
+}
+.grid-item-center {
+
+	background-color: red;
+}
+.grid-item-highlight {
+	
+	background-color: cyan;
+}
