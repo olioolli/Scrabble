@@ -183,7 +183,7 @@ var createNewLettersTiles = function (character, points, count) {
         retArr.push(createNewLetterTile(character, points, ""));
     return retArr;
 };
-var pouchLetters = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], createNewLettersTiles("A", 1, 10), true), createNewLettersTiles("B", 10, 10), true), createNewLettersTiles("D", 7, 10), true), createNewLettersTiles("E", 2, 10), true), createNewLettersTiles("F", 10, 10), true), createNewLettersTiles("G", 5, 10), true), createNewLettersTiles("H", 4, 10), true), createNewLettersTiles("I", 1, 10), true), createNewLettersTiles("J", 4, 10), true), createNewLettersTiles("K", 3, 10), true);
+var pouchLetters = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], createNewLettersTiles("A", 1, 11), true), createNewLettersTiles("D", 7, 1), true), createNewLettersTiles("E", 1, 12), true), createNewLettersTiles("G", 8, 1), true), createNewLettersTiles("H", 4, 3), true), createNewLettersTiles("I", 1, 10), true), createNewLettersTiles("J", 4, 2), true), createNewLettersTiles("K", 2, 4), true), createNewLettersTiles("L", 2, 3), true), createNewLettersTiles("M", 3, 2), true), createNewLettersTiles("N", 1, 6), true), createNewLettersTiles("O", 2, 8), true), createNewLettersTiles("P", 4, 2), true), createNewLettersTiles("R", 4, 4), true), createNewLettersTiles("S", 1, 5), true), createNewLettersTiles("T", 1, 6), true), createNewLettersTiles("U", 3, 5), true), createNewLettersTiles("V", 4, 2), true), createNewLettersTiles("Y", 4, 2), true), createNewLettersTiles("-", 0, 2), true), createNewLettersTiles("Ä", 2, 3), true), createNewLettersTiles("Ö", 3, 2), true);
 var N0R = 0, X2W = 1, X3W = 2, X2L = 3, X3L = 4, CNT = 5;
 var gameBoardTemplate = [
     [X3W, N0R, N0R, X2W, N0R, N0R, N0R, X3W, N0R, N0R, X2W, N0R, N0R, N0R, X3W],
@@ -229,14 +229,8 @@ var initialGameState = {
     turnOfPlayer: "Player1",
     pouchLetters: pouchLetters,
     playerHands: {
-        "Player1": [
-            createNewLetterTile("G", 12, "Player1"),
-            createNewLetterTile("O", 1, "Player1"),
-            createNewLetterTile("D", 5, "Player1"),
-        ],
-        "Player2": [
-            createNewLetterTile("Ö", 9, "Player2"),
-        ]
+        "Player1": [],
+        "Player2": []
     },
     board: gameBoard
 };

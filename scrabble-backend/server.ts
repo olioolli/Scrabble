@@ -194,7 +194,7 @@ const pouchLetters = [
     ...createNewLettersTiles("A",1,11),
     ...createNewLettersTiles("D",7,1),
     ...createNewLettersTiles("E",1,13),
-    ...createNewLettersTiles("G",8,10),
+    ...createNewLettersTiles("G",8,1),
     ...createNewLettersTiles("H",4,3),
     ...createNewLettersTiles("I",1,10),
     ...createNewLettersTiles("J",4,2),
@@ -290,14 +290,8 @@ const initialGameState : GameState = {
     pouchLetters: pouchLetters,
 
     playerHands: {
-        "Player1" : [
-            createNewLetterTile("G",12,"Player1"),
-            createNewLetterTile("O",1,"Player1"),
-            createNewLetterTile("D",5,"Player1"),
-        ],
-        "Player2": [ 
-            createNewLetterTile("Ö",9,"Player2"),
-        ]
+        "Player1" : [],
+        "Player2": []
     },
     board: gameBoard
 };
