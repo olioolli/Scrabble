@@ -117,12 +117,40 @@ export const useGameState = () => {
         // update board
         stateCopy.board[x][y].letter = letterTile.letter;
         stateCopy.board[x][y].points = letterTile.points;
+        stateCopy.board[x][y].letterTile = letterTile;
 
         //update hand
         removeTileFromPlayerHand(stateCopy.playerHands[getCurrentPlayerName()], letterTile);
 
         await sendGameStateToBE(stateCopy);
     }
+
+    const getLetterPosition = (letterTile : LetterTile) => {
+        for(let i = 0; i < gameState.board.length; i++) 
+            for(let j = 0; j < gameState.board.length; j++)
+                if( gameState.board[i][j].letterTile?.id === letterTile.id )
+                    return { x: i, y: j };
+
+        return null;
+    };
+
+    const moveLetterFromBoardToBoard = async (letterTile : LetterTile, x : number, y : number) => {
+        const stateCopy = copyState();
+
+        const oldPosition = getLetterPosition(letterTile);
+        if( oldPosition === null ) return;
+
+        // update new pos
+        stateCopy.board[x][y].letter = letterTile.letter;
+        stateCopy.board[x][y].points = letterTile.points;
+        stateCopy.board[x][y].letterTile = letterTile;
+        // clear old pos
+        stateCopy.board[oldPosition.x][oldPosition.y].letter = undefined;
+        stateCopy.board[oldPosition.x][oldPosition.y].points = undefined;
+        stateCopy.board[oldPosition.x][oldPosition.y].letterTile = null;
+
+        await sendGameStateToBE(stateCopy);
+    };
 
     const updatePlayerPoints = async (playerName : string, newPoints : number) => {
         const stateCopy = copyState();
@@ -140,6 +168,7 @@ export const useGameState = () => {
         togglePlayerTurn,
         getPlayers,
         moveLetterToPouchFromHand,
-        updatePlayerPoints
+        updatePlayerPoints,
+        moveLetterFromBoardToBoard
     }
 }

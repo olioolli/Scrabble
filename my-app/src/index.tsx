@@ -19,6 +19,13 @@ reportWebVitals();
 /*
 
 1st Iteration
+
+-Prevent letter duplication with onboard dragging (DONE)
+-Move letters to pouch (DONE)
+
+-Set correct letter+counts+points (DONE)
+-Fix setting player points
+
 *No login / players
 *Point setup for 2 players
 *Two URLs for players for showing different hands

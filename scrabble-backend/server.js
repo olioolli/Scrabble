@@ -213,7 +213,8 @@ var generateEmptyGameBoard = function () {
                 tileType: getTileTypeFromNumber(tileType),
                 letter: undefined,
                 isTemp: false,
-                points: undefined
+                points: undefined,
+                letterTile: null
             });
         }
     }

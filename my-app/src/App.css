@@ -72,6 +72,7 @@ body {
   padding: 4px;
   width: 38px;
   height: 38px;
+  user-select: none;
 }
 
 .grid-item-double-word {

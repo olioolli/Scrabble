@@ -191,16 +191,28 @@ const createNewLettersTiles = (character: string, points : number, count : numbe
 }
 
 const pouchLetters = [
-    ...createNewLettersTiles("A",1,10),
-    ...createNewLettersTiles("B",10,10),
-    ...createNewLettersTiles("D",7,10),
-    ...createNewLettersTiles("E",2,10),
-    ...createNewLettersTiles("F",10,10),
-    ...createNewLettersTiles("G",5,10),
-    ...createNewLettersTiles("H",4,10),
+    ...createNewLettersTiles("A",1,11),
+    ...createNewLettersTiles("D",7,1),
+    ...createNewLettersTiles("E",1,13),
+    ...createNewLettersTiles("G",8,10),
+    ...createNewLettersTiles("H",4,3),
     ...createNewLettersTiles("I",1,10),
-    ...createNewLettersTiles("J",4,10),
-    ...createNewLettersTiles("K",3,10),
+    ...createNewLettersTiles("J",4,2),
+    ...createNewLettersTiles("K",2,4),
+    ...createNewLettersTiles("L",2,3),
+    ...createNewLettersTiles("M",3,2),
+    ...createNewLettersTiles("N",1,6),
+    ...createNewLettersTiles("O",2,8),
+    ...createNewLettersTiles("P",4,2),
+    ...createNewLettersTiles("R",4,4),
+    ...createNewLettersTiles("S",1,5),
+    ...createNewLettersTiles("T",1,6),
+    ...createNewLettersTiles("U",3,5),
+    ...createNewLettersTiles("V",4,2),
+    ...createNewLettersTiles("Y",4,2),
+    ...createNewLettersTiles("-",0,2),
+    ...createNewLettersTiles("Ä",2,3),
+    ...createNewLettersTiles("Ö",3,2),
 ];
 
 export type BoardTile = {
@@ -209,6 +221,7 @@ export type BoardTile = {
     points: number | undefined,
     // Placed letter is temp until turn passed
     isTemp: boolean
+    letterTile : LetterTile | null
 }
 
 export type GameState = {
@@ -258,7 +271,8 @@ const generateEmptyGameBoard = () => {
                 tileType: getTileTypeFromNumber(tileType),
                 letter: undefined,
                 isTemp: false,
-                points: undefined
+                points: undefined,
+                letterTile : null
             });
         }
     }

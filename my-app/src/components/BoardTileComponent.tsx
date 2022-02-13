@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { LetterTile } from '../../../scrabble-backend/server';
-import { LetterTileComponent } from './LetterTileComponent';
+import { LetterTileComponent, LetterTileTransferData } from './LetterTileComponent';
 
 export const N0R = 0,
     X2W = 1,
@@ -10,8 +10,14 @@ export const N0R = 0,
     X3L = 4,
     CNT = 5;
 
+export enum TileDropType {
+    HAND_TO_POUCH = 1,
+    HAND_TO_BOARD = 2,
+    BOARD_TO_BOARD = 3
+}
+
 export type BoardTileComponentProps = {
-    tileDropped : (tile : LetterTile, x: number, y: number, isTargetPouch : boolean) => void,
+    tileDropped : (tile : LetterTile, dropType : TileDropType,x: number, y: number) => void,
     tileType : number,
     tileXPos : number,
     tileYPos : number,
@@ -24,10 +30,12 @@ export const BoardTileComponent = (props) => {
         e.preventDefault();
     };
 
+    const gridElementContainsTileElement = (gridElement : HTMLElement) => {
+        return gridElement.childElementCount > 0;
+    }
+/*
     const handleDragEnter = (e) => {
-        if (!e.target.classList.contains("grid-item") && e.target.id !== 'pouch')
-            return;
-
+        if( isDropAllowed(e.target) ) return;
         e.target.classList.add("grid-item-highlight");
     };
 
@@ -37,18 +45,44 @@ export const BoardTileComponent = (props) => {
 
         e.target.classList.remove("grid-item-highlight");
     };
+*/
+    // Returns True if tile was dragged from a board tile to a board tile (as opposed to from hand onto the board)
+    const isOnBoardDrag = (letterTileEl : HTMLElement | null) => {
+        if( letterTileEl === null || letterTileEl.parentElement === null ) return false;
+        
+        return letterTileEl.parentElement.classList.contains("grid-item");
+    }
+
+    const isDropAllowed = (droppedElement : HTMLElement) => {
+        if( !droppedElement.classList.contains("grid-item") && !droppedElement.classList.contains("letterTile"))
+            return false;
+
+        if( gridElementContainsTileElement(droppedElement) )
+            return false;
+
+        return true;
+    };
 
     const handleDragDrop = (e) => {
         e.preventDefault();
 
+        if( !isDropAllowed(e.target) ) return;
+
         e.target.classList.remove("grid-item-highlight");
 
-        const letterData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTile;
-        const letterTileEl = document.getElementById("letterTile_"+letterData.id);
+        const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
+        const letterTileEl = document.getElementById(letterTransferData.elementId);
+        const letterData = letterTransferData.letterTile;
+
+        // board tile to board tile
+        if( isOnBoardDrag(letterTileEl) ) {
+            props.tileDropped(letterData, TileDropType.BOARD_TO_BOARD, props.tileXPos, props.tileYPos);
+            return;
+        }
 
         // Dropped on pouch
         if( e.target.id === 'pouch' ) {
-            props.tileDropped(letterData, -1,-1,true);
+            props.tileDropped(letterData, TileDropType.HAND_TO_POUCH);
             return;
         }
 
@@ -67,7 +101,7 @@ export const BoardTileComponent = (props) => {
         const letter = letterTileEl.innerText.charAt(0);
         const points = parseInt(letterTileEl.children[0].innerHTML);
 
-        props.tileDropped(letterData, props.tileXPos, props.tileYPos, false);
+        props.tileDropped(letterData, TileDropType.HAND_TO_BOARD, props.tileXPos, props.tileYPos);
     };
 
     const getTileStyle = (tileType) => {
@@ -120,8 +154,8 @@ export const BoardTileComponent = (props) => {
     return (
         <div className="grid-item" 
         onDragOver={handleDragOver} 
-        onDragEnter={handleDragEnter} 
-        onDragLeave={handleDragLeave} 
+        //onDragEnter={handleDragEnter} 
+        //onDragLeave={handleDragLeave} 
         onDrop={handleDragDrop} 
         style={getTileStyle(props.tileType)}>
             {getTileTextFromProps(props.tileType)}

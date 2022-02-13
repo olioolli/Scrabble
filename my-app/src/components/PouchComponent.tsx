@@ -2,10 +2,13 @@ import { useCallback } from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { LetterTile } from '../../../scrabble-backend/server';
+import { TileDropType } from './BoardTileComponent';
+import { LetterTileTransferData } from './LetterTileComponent';
 
 export type PouchComponentProps = {
-  letters : LetterTile[];
-  moveLetterToHandFromPouch : (letter: LetterTile) => Promise<void>;
+  letters: LetterTile[];
+  moveLetterToHandFromPouch: (letter: LetterTile) => Promise<void>;
+  tileDropped : (tile : LetterTile, dropType : TileDropType,x: number, y: number) => void;
 }
 
 export const PouchComponent = (props) => {
@@ -17,23 +20,39 @@ export const PouchComponent = (props) => {
     height: "80px",
   };
 
-  const handlePouchClicked = useCallback( async () => {
-    if( props.letters.length <= 0 ) return;
+  const handlePouchClicked = useCallback(async () => {
+    if (props.letters.length <= 0) return;
     const idx = Math.floor((Math.random() * props.letters.length));
     await props.moveLetterToHandFromPouch(props.letters[idx]);
-  },[props.letters]);
+  }, [props.letters]);
 
-  const handleSvgMouseOver = useCallback ( () => {
+  const handleSvgMouseOver = useCallback(() => {
     setMouseOver(true);
   }, []);
 
-  const handleSvgMouseOut = useCallback( () => {
+  const handleSvgMouseOut = useCallback(() => {
     setMouseOver(false);
   }, []);
 
+  const handleDragDrop = (e) => {
+    e.preventDefault();
+
+    e.target.classList.remove("grid-item-highlight");
+
+    const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
+    const letterTileEl = document.getElementById(letterTransferData.elementId);
+    const letterData = letterTransferData.letterTile;
+
+    props.tileDropped(letterData, TileDropType.HAND_TO_POUCH);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+};
+
   return (
-    <div id={'pouch'} style= { { cursor: "pointer" } }>
-      <svg onClick={ handlePouchClicked} onMouseLeave={ handleSvgMouseOut} onMouseOver={ handleSvgMouseOver } style={style} version="1.0" xmlns="http://www.w3.org/2000/svg"
+    <div onDragOver={handleDragOver}  onDrop={handleDragDrop} id={'pouch'} style={{ cursor: "pointer" }}>
+      <svg onDragOver={handleDragOver}  onDrop={handleDragDrop} onClick={handlePouchClicked} onMouseLeave={handleSvgMouseOut} onMouseOver={handleSvgMouseOver} style={style} version="1.0" xmlns="http://www.w3.org/2000/svg"
         width="924.000000pt" height="1280.000000pt" viewBox="0 0 924.000000 1280.000000"
         preserveAspectRatio="xMidYMid meet">
         <metadata>
@@ -54,14 +73,16 @@ export const PouchComponent = (props) => {
   -289 460 -681 530 -108 20 -428 27 -665 15z"/>
         </g>
       </svg>
-      <LetterCountDiv 
-      onClick={ handlePouchClicked}
-      onMouseLeave={() => { setMouseOver(false); }} 
-      onMouseOver={() => { setMouseOver(true); }}>{ props.letters.length}
+      <LetterCountDiv
+      onDrop={handleDragDrop} 
+      onDragOver={handleDragOver} 
+        onClick={handlePouchClicked}
+        onMouseLeave={() => { setMouseOver(false); }}
+        onMouseOver={() => { setMouseOver(true); }}>{props.letters.length}
       </LetterCountDiv>
     </div>
   )
-}  
+}
 
 const LetterCountDiv = styled.div`
     color: #081313;

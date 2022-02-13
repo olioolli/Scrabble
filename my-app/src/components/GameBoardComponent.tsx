@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { BoardTileComponent } from './BoardTileComponent';
+import { BoardTileComponent, TileDropType } from './BoardTileComponent';
 import { HandComponent } from './HandComponent';
 import { PouchComponent } from './PouchComponent';
 import { BoardTile, GameState, LetterTile } from '../../../scrabble-backend/server';
@@ -18,13 +18,16 @@ export const GameBoardComponent = () => {
         getPlayers, 
         togglePlayerTurn, 
         moveLetterToPouchFromHand,
-        updatePlayerPoints } = useGameState();
+        updatePlayerPoints,
+        moveLetterFromBoardToBoard } = useGameState();
 
-    const handleLetterTileDrop = async (letterTile: LetterTile, x: number, y: number, isTargetPouch: boolean) => {
-        if (isTargetPouch)
+    const handleLetterTileDrop = async (letterTile: LetterTile,dropType: TileDropType, x: number, y: number, newX: number, newY: number) => {
+        if (dropType === TileDropType.HAND_TO_POUCH )
             await moveLetterToPouchFromHand(letterTile);
-        else
+        else if( dropType === TileDropType.HAND_TO_BOARD )
             await moveLetterFromHandToBoard(letterTile, x, y);
+        else
+            await moveLetterFromBoardToBoard(letterTile, x, y);
     };
 
     const handleEndTurnClicked = useCallback(async () => {
@@ -56,7 +59,7 @@ export const GameBoardComponent = () => {
                     {gameState.board.map((x, y) => (
                         x.map((tile, i) => (
                             <BoardTileComponent
-                                letterTile={tile.letter ? { letter: tile.letter, points: tile.points } : undefined}
+                                letterTile={ tile.letterTile }
                                 tileXPos={y}
                                 tileYPos={i}
                                 tileDropped={handleLetterTileDrop}
@@ -69,6 +72,7 @@ export const GameBoardComponent = () => {
                     <PouchComponent
                         letters={gameState.pouchLetters !== undefined ? gameState.pouchLetters : []}
                         moveLetterToHandFromPouch={moveLetterToHandFromPouch}
+                        tileDropped= {handleLetterTileDrop}
                     />
                 </BottomContainer>
                 <EndTurnButton onClick={handleEndTurnClicked} >End turn</EndTurnButton>
