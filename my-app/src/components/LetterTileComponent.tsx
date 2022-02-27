@@ -10,6 +10,7 @@ export type LetterTileTransferData = {
 export type LetterProps = {
     leftPos: string;
     letter : LetterTile
+    tileDropped? : (letter : LetterTile, targetLetter : LetterTile) => void;
 };
 
 const getLetterTransferData = (letterTile : LetterTile, elementId : string ) => {
@@ -34,8 +35,18 @@ export const LetterTileComponent = (props : LetterProps) => {
         e.dataTransfer.setData("text/plain", JSON.stringify(getLetterTransferData(props.letter, elementId)));
     }
 
+    const handleDragDrop = (e) => {
+        e.preventDefault();
+
+        const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
+        const letterTile = letterTransferData.letterTile;
+
+        if( props.tileDropped ) 
+            props.tileDropped(letterTile, props.letter);
+    }
+
     return (
-        <div onDragStart={ handleDragStart } draggable="true" className="letterTile" id={elementId}>
+        <div onDrop={handleDragDrop} onDragStart={ handleDragStart } draggable="true" className="letterTile" id={elementId}>
             {props.letter.letter}
             <div className="letterPoint">
                 {props.letter.points}

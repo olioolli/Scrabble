@@ -19,13 +19,16 @@ export const GameBoardComponent = () => {
         togglePlayerTurn, 
         moveLetterToPouchFromHand,
         updatePlayerPoints,
-        moveLetterFromBoardToBoard } = useGameState();
+        moveLetterFromBoardToBoard,
+        moveLetterFromBoardToHand } = useGameState();
 
-    const handleLetterTileDrop = async (letterTile: LetterTile,dropType: TileDropType, x: number, y: number, newX: number, newY: number) => {
+    const handleLetterTileDrop = async (letterTile: LetterTile,dropType: TileDropType, x: number, y: number, newX?: number, newY?: number) => {
         if (dropType === TileDropType.HAND_TO_POUCH )
             await moveLetterToPouchFromHand(letterTile);
         else if( dropType === TileDropType.HAND_TO_BOARD )
             await moveLetterFromHandToBoard(letterTile, x, y);
+        else if( dropType == TileDropType.BOARD_TO_HAND )
+            await moveLetterFromBoardToHand(letterTile);
         else
             await moveLetterFromBoardToBoard(letterTile, x, y);
     };
@@ -44,13 +47,6 @@ export const GameBoardComponent = () => {
 
     return (
         <div>
-            <HeaderContainer>
-                {
-                    getPlayers().map(player => (
-                        <PlayerInfo isActive={gameState.turnOfPlayer === player} key={player} points={gameState.playerPoints[player]} name={player} pointsUpdated={handlePointsUpdated}></PlayerInfo>
-                    ))
-                }
-            </HeaderContainer>
             <MainDiv>
                 {
                     isCurrentPlayerActive() ? <></> : <InactivePlayerBlocker>Not your turn</InactivePlayerBlocker>
@@ -59,6 +55,7 @@ export const GameBoardComponent = () => {
                     {gameState.board.map((x, y) => (
                         x.map((tile, i) => (
                             <BoardTileComponent
+                                key={i}
                                 letterTile={ tile.letterTile }
                                 tileXPos={y}
                                 tileYPos={i}
@@ -67,31 +64,43 @@ export const GameBoardComponent = () => {
                             </BoardTileComponent>))
                     ))}
                 </BoardComponent>
+                <PlayerContainer>
+                {getPlayers().map(player => (
+                        <PlayerInfo isActive={gameState.turnOfPlayer === player} key={player} points={gameState.playerPoints[player]} name={player} pointsUpdated={handlePointsUpdated}></PlayerInfo>
+                    ))
+                }
+                <EndTurnButton onClick={handleEndTurnClicked} >End turn</EndTurnButton>
+                </PlayerContainer>
                 <BottomContainer>
-                    <HandComponent letters={gameState.playerHands[getCurrentPlayerName()] !== undefined ? gameState.playerHands[getCurrentPlayerName()] : []} />
+                    <HandComponent tileDropped={handleLetterTileDrop} letters={gameState.playerHands[getCurrentPlayerName()] !== undefined ? gameState.playerHands[getCurrentPlayerName()] : []} />
                     <PouchComponent
                         letters={gameState.pouchLetters !== undefined ? gameState.pouchLetters : []}
                         moveLetterToHandFromPouch={moveLetterToHandFromPouch}
                         tileDropped= {handleLetterTileDrop}
                     />
                 </BottomContainer>
-                <EndTurnButton onClick={handleEndTurnClicked} >End turn</EndTurnButton>
-
             </MainDiv>
         </div>
     );
 }
 
-const HeaderContainer = styled.div`
+const PlayerContainer = styled.div`
+    position: absolute;
+    right: 10%;
+    top: 1px;
     display: flex;
     justify-content: space-evenly;
-    flex-direction: row;`;
+    flex-direction: column;`;
 
 const EndTurnButton = styled.button`
-    width: 100px;
-    padding: 5px;
-    background: #eef1e3;
-    border-radius: 4px;
+width: 100px;
+padding: 5px;
+height: 50px;
+background: #eef1e3;
+border-radius: 4px;
+margin-top: 10px;
+padding: 10px;
+    margin-left: 10px;
 `;
 
 const MainDiv = styled.div`
@@ -123,9 +132,12 @@ const BottomContainer = styled.div`
 const BoardComponent = styled.div`
 display: grid;
 grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
-background-color: #2196F3;
+background-color: #979797;
 padding: 2px;
 width: 718px;
 margin: auto;
-padding: 10px;
+margin-top:5px;
+padding: 4px;
+padding-right: 5px;
+border-radius: 3px;
 `;

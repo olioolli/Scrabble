@@ -189,7 +189,7 @@ const createNewLettersTiles = (character: string, points : number, count : numbe
         retArr.push(createNewLetterTile(character,points,""));
     return retArr;
 }
-
+/*
 const pouchLetters = [
     ...createNewLettersTiles("A",1,11),
     ...createNewLettersTiles("D",7,1),
@@ -213,6 +213,31 @@ const pouchLetters = [
     ...createNewLettersTiles("-",0,2),
     ...createNewLettersTiles("Ä",2,3),
     ...createNewLettersTiles("Ö",3,2),
+];
+*/
+const pouchLetters = [
+    ...createNewLettersTiles("A",1,6),
+    ...createNewLettersTiles("D",7,1),
+    ...createNewLettersTiles("E",1,3),
+    ...createNewLettersTiles("G",8,1),
+    ...createNewLettersTiles("H",4,3),
+    ...createNewLettersTiles("I",1,3),
+    ...createNewLettersTiles("J",4,1),
+    ...createNewLettersTiles("K",2,2),
+    ...createNewLettersTiles("L",2,2),
+    ...createNewLettersTiles("M",3,1),
+    ...createNewLettersTiles("N",1,3),
+    ...createNewLettersTiles("O",2,4),
+    ...createNewLettersTiles("P",4,1),
+    ...createNewLettersTiles("R",4,2),
+    ...createNewLettersTiles("S",1,2),
+    ...createNewLettersTiles("T",1,3),
+    ...createNewLettersTiles("U",3,2),
+    ...createNewLettersTiles("V",4,1),
+    ...createNewLettersTiles("Y",4,1),
+    ...createNewLettersTiles("-",0,1),
+    ...createNewLettersTiles("Ä",2,1),
+    ...createNewLettersTiles("Ö",3,1),
 ];
 
 export type BoardTile = {

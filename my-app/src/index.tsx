@@ -17,58 +17,30 @@ ReactDOM.render(
 reportWebVitals();
 
 /*
+TASKS
 
-1st Iteration
+Iteration 1
 
--Prevent letter duplication with onboard dragging (DONE)
--Move letters to pouch (DONE)
+-small screen scaling
+-Send point updates to backend
+-reduce letter count / timer
 
--Set correct letter+counts+points (DONE)
--Fix setting player points
+-tile broken vertical alignment (caused by special board tiles)
+-Add reset game button somewhere
+-Performance enhancements: Add useCallbacks etc
+-Get rid of warnings pt2
+-Indicate which player's screen is currently visible
+-Visual improvements
 
-*No login / players
-*Point setup for 2 players
-*Two URLs for players for showing different hands
+-move letter from board->hand (DONE)
+-rearrange hand (DONE)
+-Remove warnings pt1 (DONE)
+
 
 2nd Iteration
 *Login (player name)
 *Setup view before game starts
 *Single URL for all players
 *support for 'several' players
-
-TASKS
-
-IT1
-
--Implement getting tiles from pouch
- *Show pouch letter count (DONE)
- *Put letter in pouch
- *Draw letter from pouch (DONE)
-
--Implement pushing updates from server to client (DONE)
- *Websocket? (DONE)
- *When tile placed, turn ended, etc client should update game state from be (DONE)
-
--Prevent dragging tiles on board
- *Track if tile was placed this turn or not
- *Allow dragging of tiles placed this turn
-
-
--Send point updates to backend
-
--Add reset game button somewhere
-
--Performance enhancements: Add useCallbacks etc
-
--Get rid of warnings
-
-MISC
-*Indicate which player's screen is currently visible
-IT2
-
--Implement player turns
- *Display current players hand (same URL)
-
- -Implement login
- *Add player to session
+*more visual improvements
 */

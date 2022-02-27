@@ -3,7 +3,7 @@ import { Player } from "./types/types";
 
 export const usePlayers = () => {
 
-  const [ players, setPlayers ] = useState(<Player[]>[]);
+  const [ players, setPlayers ] = useState([] as Player[]);
   
  return {
    players : players,

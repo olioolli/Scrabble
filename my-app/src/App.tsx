@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { LoginComponent } from './components/LoginComponent';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
 } from "react-router-dom";
-import { GameBoardComponent } from './components/GameBoardComponent';
 import styled from 'styled-components';
-import { Lobby } from './components/Lobby';
-import axios from 'axios';
 import { MainView } from './components/MainView';
 
 

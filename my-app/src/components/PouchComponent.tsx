@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { LetterTile } from '../../../scrabble-backend/server';
 import { TileDropType } from './BoardTileComponent';
@@ -24,7 +24,7 @@ export const PouchComponent = (props) => {
     if (props.letters.length <= 0) return;
     const idx = Math.floor((Math.random() * props.letters.length));
     await props.moveLetterToHandFromPouch(props.letters[idx]);
-  }, [props.letters]);
+  }, [props]);
 
   const handleSvgMouseOver = useCallback(() => {
     setMouseOver(true);
@@ -40,7 +40,6 @@ export const PouchComponent = (props) => {
     e.target.classList.remove("grid-item-highlight");
 
     const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
-    const letterTileEl = document.getElementById(letterTransferData.elementId);
     const letterData = letterTransferData.letterTile;
 
     props.tileDropped(letterData, TileDropType.HAND_TO_POUCH);

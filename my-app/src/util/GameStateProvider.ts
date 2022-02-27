@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BoardTile, GameState, LetterTile } from "../../../scrabble-backend/server";
 import { BE_URL, BE_WS_URL } from "../state";
 import { getCurrentPlayerName } from "./utils";
@@ -15,11 +15,11 @@ const initialGameState = {
 
 export const useGameState = () => {
 
-    const players = ["Player1", "Player2"]; // TODO: move to backend
+    const players = useMemo( () => ["Player1", "Player2"],[]); // TODO: move to backend
 
     const [gameState, setGameState] = useState<GameState>(initialGameState);
 
-    const copyState = (): GameState => {
+    const copyState = useCallback( (): GameState => {
 
         const playerPoints = {};
         const turnOfPlayer = "" + gameState.turnOfPlayer;
@@ -30,7 +30,7 @@ export const useGameState = () => {
         for(var i = 0; i < gameState.playerPoints.length; i++)
             playerPoints[i] = gameState.playerPoints[i];
 
-        for (var i = 0; i < gameState.board.length; i++)
+        for (i = 0; i < gameState.board.length; i++)
             board[i] = gameState.board[i].slice();
 
         for (let i in gameState.playerHands)
@@ -43,7 +43,7 @@ export const useGameState = () => {
             board,
             playerHands
         }
-    }
+    },[gameState]);
 
     const fetchGameStateFromBe = useCallback(() => {
         axios.get(BE_URL + "/game").then((resp) => {
@@ -79,7 +79,7 @@ export const useGameState = () => {
         const nextPlayer = gameStateCopy.turnOfPlayer === players[0] ? players[1] : players[0];
         gameStateCopy.turnOfPlayer = nextPlayer;
         await sendGameStateToBE(gameStateCopy);
-    }, [gameState, copyState]);
+    }, [copyState, players]);
 
     const moveLetterToPouchFromHand = async (letter: LetterTile) => {
         const gameStateCopy = copyState();
@@ -152,6 +152,21 @@ export const useGameState = () => {
         await sendGameStateToBE(stateCopy);
     };
 
+    const moveLetterFromBoardToHand = async (letterTile : LetterTile) => {
+        const stateCopy = copyState();
+
+        const oldPosition = getLetterPosition(letterTile);
+        if( oldPosition === null ) return;
+
+        // clear old pos
+        stateCopy.board[oldPosition.x][oldPosition.y].letter = undefined;
+        stateCopy.board[oldPosition.x][oldPosition.y].points = undefined;
+        stateCopy.board[oldPosition.x][oldPosition.y].letterTile = null;
+
+        stateCopy.playerHands[getCurrentPlayerName()].push(letterTile);
+        await sendGameStateToBE(stateCopy);
+    };
+
     const updatePlayerPoints = async (playerName : string, newPoints : number) => {
         const stateCopy = copyState();
         stateCopy.playerPoints[playerName] = newPoints;
@@ -169,6 +184,7 @@ export const useGameState = () => {
         getPlayers,
         moveLetterToPouchFromHand,
         updatePlayerPoints,
-        moveLetterFromBoardToBoard
+        moveLetterFromBoardToBoard,
+        moveLetterFromBoardToHand
     }
 }

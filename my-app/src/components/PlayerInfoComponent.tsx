@@ -1,18 +1,63 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 
 export type PlayerInfoProps = {
-  pointsUpdated : (playerName : string, newPointValue : number) => void;
-  isActive : boolean,
+  pointsUpdated: (playerName: string, newPointValue: number) => void;
+  isActive: boolean,
   name: string
-  points : number;
+  points: number;
 }
 
-export const PlayerInfo = (props : PlayerInfoProps) => {
+export const PlayerInfo = (props: PlayerInfoProps) => {
 
-    const PlayerContainer = styled.div`
-    border: 1px solid black;
+  const [points, setPoints] = useState(0);
+  const [newPoints, setNewPoints] = useState(0);
+
+  useEffect( () => {
+    setPoints(props.points);
+  },[props.points]);
+
+  const handlePointsChanged = (change: number) => {
+    const newPointsNewValue = change + newPoints;
+    setNewPoints(newPointsNewValue > 0 ? newPointsNewValue : 0);
+    props.pointsUpdated(props.name, points);
+  };
+
+  const handeAddPoints = () => {
+    props.pointsUpdated(props.name, newPoints);
+  };
+
+  return (
+    <FlexDivRow>
+      <PlayerContainer>
+        <div>{props.name}</div>
+        <div>{points + "pts"}</div>
+      </PlayerContainer>
+      <NewPointsDiv>+{newPoints}</NewPointsDiv>
+      <FlexDivCol>
+        <PointButton onClick={() => handlePointsChanged(1)}>+</PointButton>
+        <PointButton onClick={() => handlePointsChanged(-1)}>-</PointButton>
+      </FlexDivCol>
+      <SendPointsButton onClick={handeAddPoints} >Add</SendPointsButton>
+    </FlexDivRow>
+  )
+}
+
+const SendPointsButton = styled.button`
+
+`;
+
+const NewPointsDiv = styled.div`
+background-color: white;
+padding-top: 20px;
+padding-left: 10px;
+padding-right: 20px;
+`;
+
+const PlayerContainer = styled.div`
+      border-right: 1px solid black;
       padding: 10px;
       min-width: 57px;
       padding-left: 15px;
@@ -22,40 +67,19 @@ export const PlayerInfo = (props : PlayerInfoProps) => {
     & > div {
       display: inline-block;
     }`;
-  
-    const PointButton = styled.button`
+
+const PointButton = styled.button`
       height: 100%;
     `;
-  
-    const FlexDivRow = styled.div`
+
+const FlexDivRow = styled.div`
     display: flex;
     flex-direction: row;
     padding: 10px;
     border: ${props => props.isActive ? "red 1px solid" : "none"}
     `;
-  
-    const FlexDivCol = styled.div`
+
+const FlexDivCol = styled.div`
     display: flex;
     flex-direction: column;
     `;
-  
-    const [points, setPoints] = useState(props.points);
-  
-    const handlePointsChanged = (change : number) => {
-      setPoints( points + change );
-      props.pointsUpdated(props.name, points);
-    };
-
-    return (
-      <FlexDivRow>
-        <PlayerContainer>
-          <div>{props.name}</div>
-          <div>{points + "pts"}</div>
-        </PlayerContainer>
-        <FlexDivCol>
-          <PointButton onClick={() => handlePointsChanged(1)}>+</PointButton>
-          <PointButton onClick={() => handlePointsChanged(-1)}>-</PointButton>
-        </FlexDivCol>
-      </FlexDivRow>
-    )
-  }

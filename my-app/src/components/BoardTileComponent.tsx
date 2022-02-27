@@ -13,7 +13,8 @@ export const N0R = 0,
 export enum TileDropType {
     HAND_TO_POUCH = 1,
     HAND_TO_BOARD = 2,
-    BOARD_TO_BOARD = 3
+    BOARD_TO_BOARD = 3,
+    BOARD_TO_HAND = 4,
 }
 
 export type BoardTileComponentProps = {
@@ -121,7 +122,7 @@ export const BoardTileComponent = (props) => {
         else if (tileType == X2L)
             return "cyan";
         else if (tileType == X3L)
-            return "blue";
+            return "#4a4a91";
         else if (tileType == CNT)
             return "red";
 
