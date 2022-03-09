@@ -11,6 +11,8 @@ export type LetterProps = {
     leftPos: string;
     letter : LetterTile
     tileDropped? : (letter : LetterTile, targetLetter : LetterTile) => void;
+    isPlacedOnSpecialTile? : boolean;
+    isPlacedOnHand? : boolean;
 };
 
 const getLetterTransferData = (letterTile : LetterTile, elementId : string ) => {
@@ -45,8 +47,10 @@ export const LetterTileComponent = (props : LetterProps) => {
             props.tileDropped(letterTile, props.letter);
     }
 
+    const tileStyle = props.isPlacedOnSpecialTile ? "letterTile letterTileTopFix" : props.isPlacedOnHand ? "letterTile letterTileOnHand" : "letterTile";
+
     return (
-        <div onDrop={handleDragDrop} onDragStart={ handleDragStart } draggable="true" className="letterTile" id={elementId}>
+        <div onDrop={handleDragDrop} onDragStart={ handleDragStart } draggable="true" className={tileStyle} id={elementId}>
             {props.letter.letter}
             <div className="letterPoint">
                 {props.letter.points}

@@ -21,21 +21,17 @@ TASKS
 
 Iteration 1
 
--small screen scaling
--Send point updates to backend
--reduce letter count / timer
-
--tile broken vertical alignment (caused by special board tiles)
--Add reset game button somewhere
--Performance enhancements: Add useCallbacks etc
--Get rid of warnings pt2
--Indicate which player's screen is currently visible
+-add env file for configuring IPs
 -Visual improvements
+-Get rid of warnings pt2
 
--move letter from board->hand (DONE)
--rearrange hand (DONE)
--Remove warnings pt1 (DONE)
-
+-tile broken vertical alignment (caused by special board tiles) (DONE)
+ *Move board tile text to it's own element (DONE)
+ *Fix alignment (DONE)
+-auto draw initial 7 tiles (DONE)
+-re-arrange hand during opps turn (DONE)
+-Send point updates to backend (DONE)
+-reduce letter count / timer (DONE)
 
 2nd Iteration
 *Login (player name)
@@ -43,4 +39,8 @@ Iteration 1
 *Single URL for all players
 *support for 'several' players
 *more visual improvements
+*small screen scaling
+*Add reset game button somewhere
+*Indicate which player's screen is currently visible
+*Performance enhancements: Add useCallbacks etc
 */

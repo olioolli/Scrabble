@@ -32,21 +32,10 @@ export const BoardTileComponent = (props) => {
     };
 
     const gridElementContainsTileElement = (gridElement : HTMLElement) => {
-        return gridElement.childElementCount > 0;
+        const gridE = gridElement.classList.contains("grid-item") ? gridElement : gridElement.parentElement;
+        return gridE && gridE.childElementCount > 1;
     }
-/*
-    const handleDragEnter = (e) => {
-        if( isDropAllowed(e.target) ) return;
-        e.target.classList.add("grid-item-highlight");
-    };
 
-    const handleDragLeave = (e) => {
-        if (!e.target.classList.contains("grid-item") )
-            return;
-
-        e.target.classList.remove("grid-item-highlight");
-    };
-*/
     // Returns True if tile was dragged from a board tile to a board tile (as opposed to from hand onto the board)
     const isOnBoardDrag = (letterTileEl : HTMLElement | null) => {
         if( letterTileEl === null || letterTileEl.parentElement === null ) return false;
@@ -54,11 +43,16 @@ export const BoardTileComponent = (props) => {
         return letterTileEl.parentElement.classList.contains("grid-item");
     }
 
-    const isDropAllowed = (droppedElement : HTMLElement) => {
-        if( !droppedElement.classList.contains("grid-item") && !droppedElement.classList.contains("letterTile"))
+    const isDropAllowed = (dropTarget : HTMLElement) => {
+        
+        if( gridElementContainsTileElement(dropTarget) )
             return false;
 
-        if( gridElementContainsTileElement(droppedElement) )
+        const targetBoardTile = dropTarget.childElementCount === 0 ? dropTarget.parentElement : dropTarget;
+        if( !targetBoardTile )
+            return false;
+
+        if( !targetBoardTile.classList.contains("grid-item") && !targetBoardTile.classList.contains("letterTile"))
             return false;
 
         return true;
@@ -68,8 +62,6 @@ export const BoardTileComponent = (props) => {
         e.preventDefault();
 
         if( !isDropAllowed(e.target) ) return;
-
-        e.target.classList.remove("grid-item-highlight");
 
         const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
         const letterTileEl = document.getElementById(letterTransferData.elementId);
@@ -87,17 +79,14 @@ export const BoardTileComponent = (props) => {
             return;
         }
 
+
+        // Check if dropped on boardTile
         if (!letterTileEl || !e.target.classList.contains("grid-item"))
-            return;
-
-        if (e.target.childElementCount > 0)
-            return;
-
-        if (props.tileType > 0 )
-            letterTileEl.style.top = "-18px";
+            // check if dropped on special board tile (on the worddiv)
+            if( !letterTileEl || e.target.parentElement && !e.target.parentElement.classList.contains("grid-item"))
+                return;
 
         letterTileEl.style.left = "";
-        //e.target.appendChild(letterTileEl);
         
         const letter = letterTileEl.innerText.charAt(0);
         const points = parseInt(letterTileEl.children[0].innerHTML);
@@ -148,19 +137,23 @@ export const BoardTileComponent = (props) => {
             return null;
         
         return (
-            <LetterTileComponent letter={props.letterTile} leftPos={"0"}></LetterTileComponent>
+            <LetterTileComponent isPlacedOnSpecialTile={ getTileTextFromProps(props.tileType) !== "" } letter={props.letterTile} leftPos={"0"}></LetterTileComponent>
         )
     }
 
     return (
         <div className="grid-item" 
         onDragOver={handleDragOver} 
-        //onDragEnter={handleDragEnter} 
-        //onDragLeave={handleDragLeave} 
         onDrop={handleDragDrop} 
         style={getTileStyle(props.tileType)}>
-            {getTileTextFromProps(props.tileType)}
+            <TileTextDiv
+                onDragOver={handleDragOver} 
+            >{getTileTextFromProps(props.tileType)}</TileTextDiv>
             {getLetterTileFromProps()}
         </div>
     )
 }
+
+const TileTextDiv = styled.div`
+margin-top: 10px;
+`;

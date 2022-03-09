@@ -86,7 +86,7 @@ export const HandComponent = (props: HandComponentProps) => {
     return (
         <Div onDragOver={handleDragOver} onDrop={handleDragDrop}>
             {letters.map((letter, idx) => (
-                <LetterTileComponent key={idx} tileDropped = {handleLetterDrop} letter={letter} leftPos={calculateLeftPos(idx)}></LetterTileComponent>
+                <LetterTileComponent key={idx} isPlacedOnHand={true} tileDropped = {handleLetterDrop} letter={letter} leftPos={calculateLeftPos(idx)}></LetterTileComponent>
             ))}
         </Div>
     )
@@ -99,4 +99,5 @@ width: 500px;
 background-color: #989a8e;
 border-top-left-radius: 5px;
 border-top-right-radius: 5px;
+z-index: 10000;
 `;

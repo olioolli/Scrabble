@@ -20,13 +20,13 @@ export const PlayerInfo = (props: PlayerInfoProps) => {
   },[props.points]);
 
   const handlePointsChanged = (change: number) => {
-    const newPointsNewValue = change + newPoints;
-    setNewPoints(newPointsNewValue > 0 ? newPointsNewValue : 0);
-    props.pointsUpdated(props.name, points);
+    setNewPoints(change + newPoints);
+    //props.pointsUpdated(props.name, points);
   };
 
   const handeAddPoints = () => {
-    props.pointsUpdated(props.name, newPoints);
+    props.pointsUpdated(props.name, points + newPoints);
+    setNewPoints(0);
   };
 
   return (
@@ -35,7 +35,7 @@ export const PlayerInfo = (props: PlayerInfoProps) => {
         <div>{props.name}</div>
         <div>{points + "pts"}</div>
       </PlayerContainer>
-      <NewPointsDiv>+{newPoints}</NewPointsDiv>
+      <NewPointsDiv>{newPoints}</NewPointsDiv>
       <FlexDivCol>
         <PointButton onClick={() => handlePointsChanged(1)}>+</PointButton>
         <PointButton onClick={() => handlePointsChanged(-1)}>-</PointButton>

@@ -27,10 +27,10 @@ export const useGameState = () => {
         const board: BoardTile[][] = [];
         const playerHands: Record<string, LetterTile[]> = {};
 
-        for(var i = 0; i < gameState.playerPoints.length; i++)
-            playerPoints[i] = gameState.playerPoints[i];
+        for(let playerName in gameState.playerPoints )
+            playerPoints[playerName] = gameState.playerPoints[playerName];
 
-        for (i = 0; i < gameState.board.length; i++)
+        for (let i = 0; i < gameState.board.length; i++)
             board[i] = gameState.board[i].slice();
 
         for (let i in gameState.playerHands)

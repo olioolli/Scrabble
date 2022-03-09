@@ -305,6 +305,15 @@ const generateEmptyGameBoard = () => {
     return board;
 };
 
+const getRandomStartingHand = () => {
+    const retArr = [];
+    for(let i = 0; i < 7; i++) {
+        const idx = Math.floor((Math.random() * pouchLetters.length));
+        retArr.push(...pouchLetters.splice(idx,1));
+    }
+    return retArr;
+}
+
 let gameBoard = generateEmptyGameBoard();
 const initialGameState : GameState = {
     playerPoints: {
@@ -315,8 +324,8 @@ const initialGameState : GameState = {
     pouchLetters: pouchLetters,
 
     playerHands: {
-        "Player1" : [],
-        "Player2": []
+        "Player1" : getRandomStartingHand(),
+        "Player2": getRandomStartingHand()
     },
     board: gameBoard
 };
