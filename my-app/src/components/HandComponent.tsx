@@ -93,11 +93,14 @@ export const HandComponent = (props: HandComponentProps) => {
 }
 
 const Div = styled.div`
-margin-top: 10px;
-height: 50px;
-width: 500px;
-background-color: #989a8e;
-border-top-left-radius: 5px;
-border-top-right-radius: 5px;
-z-index: 10000;
+    margin-top: 10px;
+    height: 50px;
+    width: 500px;
+    background-color: #636a3f;
+    z-index: 10000;
+    padding-left: 8px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 6px;
+    border: 2px solid #686433;
 `;

@@ -21,9 +21,15 @@ TASKS
 
 Iteration 1
 
--add env file for configuring IPs
--Visual improvements
 -Get rid of warnings pt2
+-Login (player name) (DONE)
+-List player names (DONE)
+
+-Visual improvements
+ *Hand (DONE)
+ *Tiles (DONE)
+ *Board (DONE)
+ *PlayerInfo (DONE)
 
 -tile broken vertical alignment (caused by special board tiles) (DONE)
  *Move board tile text to it's own element (DONE)
@@ -34,7 +40,6 @@ Iteration 1
 -reduce letter count / timer (DONE)
 
 2nd Iteration
-*Login (player name)
 *Setup view before game starts
 *Single URL for all players
 *support for 'several' players

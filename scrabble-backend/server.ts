@@ -72,11 +72,6 @@ app.listen(PORT, () => {
 })
 
 app.post("/login", (req, res) => {
-    if (!req.body.password || req.body.password !== password) {
-        res.sendStatus(401);
-        return;
-    }
-
     if (req.body.username) {
         if (!addUser(req.body.username)) {
             res.sendStatus(400);
@@ -84,6 +79,7 @@ app.post("/login", (req, res) => {
         }
         else {
             res.sendStatus(200);
+            broadCastGameState();
             return;
         }
     }
@@ -116,7 +112,8 @@ app.get("/users", (req, res) => {
 });
 
 app.get("/reset", (req, res) => {
-    gameState = initialGameState;
+    gameState = createInitialGameState();
+    users = [];
     res.send("Game reset");
 });
 
@@ -125,6 +122,14 @@ const addUser = (username: string) => {
         return false;
 
     users.push(username);
+    
+    if( gameState.turnOfPlayer === '' )
+        gameState.turnOfPlayer = username;
+    
+    gameState.playerPoints[username] = 0;
+    gameState.playerHands[username] = getRandomStartingHand();
+    if( gameState.turnOfPlayer === '' )
+        gameState.turnOfPlayer = username;
     return true;
 }
 
@@ -136,8 +141,7 @@ const getUser = (username: string) => {
     return undefined;
 }
 
-const password = "kala";
-const users: string[] = [];
+let users: string[] = [];
 
 export enum TileType {
     N0R = 0,
@@ -315,18 +319,15 @@ const getRandomStartingHand = () => {
 }
 
 let gameBoard = generateEmptyGameBoard();
-const initialGameState : GameState = {
-    playerPoints: {
-        "Player1" : 0,
-        "Player2" : 0
-    },
-    turnOfPlayer: "Player1",
-    pouchLetters: pouchLetters,
 
-    playerHands: {
-        "Player1" : getRandomStartingHand(),
-        "Player2": getRandomStartingHand()
-    },
-    board: gameBoard
-};
-let gameState = initialGameState;
+const createInitialGameState = () : GameState => {
+    return {
+        playerPoints: {},
+        turnOfPlayer: '',
+        pouchLetters: pouchLetters,
+        playerHands: {},
+        board: gameBoard
+    }
+}
+
+let gameState = createInitialGameState();

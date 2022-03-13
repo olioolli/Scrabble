@@ -72,14 +72,23 @@ export const useGameState = () => {
         fetchGameStateFromBe();
     }, [fetchGameStateFromBe]);
 
-    const getPlayers = (): string[] => players;
+    const getPlayers = (): string[] => Object.keys(gameState.playerHands);
 
     const togglePlayerTurn = useCallback(async () => {
         const gameStateCopy = copyState();
-        const nextPlayer = gameStateCopy.turnOfPlayer === players[0] ? players[1] : players[0];
+        const nextPlayer = getNextPlayer();
         gameStateCopy.turnOfPlayer = nextPlayer;
         await sendGameStateToBE(gameStateCopy);
     }, [copyState, players]);
+
+    const getNextPlayer = () => {
+        const players = getPlayers();
+        let currentPlayerIdx = players.findIndex( (player) => player === gameState.turnOfPlayer );
+        currentPlayerIdx++;
+        if( currentPlayerIdx >= players.length )
+            currentPlayerIdx = 0;
+        return players[currentPlayerIdx];
+    }
 
     const moveLetterToPouchFromHand = async (letter: LetterTile) => {
         const gameStateCopy = copyState();

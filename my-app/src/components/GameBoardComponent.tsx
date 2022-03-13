@@ -90,7 +90,13 @@ const PlayerContainer = styled.div`
     top: 1px;
     display: flex;
     justify-content: space-evenly;
-    flex-direction: column;`;
+    flex-direction: column;
+    border: 1px solid #ffffff;
+    padding: 5px;
+    margin-top: 10px;
+    border-radius: 4px;
+    background: #636a3f;
+    `;
 
 const EndTurnButton = styled.button`
 width: 100px;
@@ -101,6 +107,8 @@ border-radius: 4px;
 margin-top: 10px;
 padding: 10px;
     margin-left: 10px;
+    font-weight: bold;
+    background-color: #eef1e3;
 `;
 
 const MainDiv = styled.div`
@@ -127,17 +135,18 @@ const MainContainer = styled.div`
 const BottomContainer = styled.div`
 	display: flex;
 	justify-content: center;
+    margin-top: 10px;
 `;
 
 const BoardComponent = styled.div`
 display: grid;
-grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
-background-color: #979797;
-padding: 2px;
-width: 718px;
-margin: auto;
-margin-top:5px;
-padding: 4px;
-padding-right: 5px;
-border-radius: 3px;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+    background-color: #2e4289;
+    padding: 2px;
+    width: 718px;
+    margin: auto;
+    margin-top: 5px;
+    padding: 8px;
+    padding-right: 8px;
+    border-radius: 3px;
 `;

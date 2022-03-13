@@ -105,15 +105,15 @@ export const BoardTileComponent = (props) => {
     const getTileColorFromProps = (tileType) => {
 
         if (tileType == X2W)
-            return "pink";
+            return "#ffc0cbb5";
         else if (tileType == X3W)
-            return "red";
+            return "#ff0000a6";
         else if (tileType == X2L)
-            return "cyan";
+            return "#00ffffb3";
         else if (tileType == X3L)
             return "#4a4a91";
         else if (tileType == CNT)
-            return "red";
+            return "#ff000073";
 
         return "";
     }
@@ -156,4 +156,6 @@ export const BoardTileComponent = (props) => {
 
 const TileTextDiv = styled.div`
 margin-top: 10px;
+font-style: italic;
+font-size: 10px;
 `;

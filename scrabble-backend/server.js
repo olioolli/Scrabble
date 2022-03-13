@@ -87,10 +87,6 @@ app.listen(PORT, function () {
         + 'on port http://localhost:' + PORT);
 });
 app.post("/login", function (req, res) {
-    if (!req.body.password || req.body.password !== password) {
-        res.sendStatus(401);
-        return;
-    }
     if (req.body.username) {
         if (!addUser(req.body.username)) {
             res.sendStatus(400);
@@ -98,6 +94,7 @@ app.post("/login", function (req, res) {
         }
         else {
             res.sendStatus(200);
+            broadCastGameState();
             return;
         }
     }
@@ -125,13 +122,20 @@ app.get("/users", function (req, res) {
     res.send(JSON.stringify(users));
 });
 app.get("/reset", function (req, res) {
-    gameState = initialGameState;
+    gameState = createInitialGameState();
+    users = [];
     res.send("Game reset");
 });
 var addUser = function (username) {
     if (getUser(username))
         return false;
     users.push(username);
+    if (gameState.turnOfPlayer === '')
+        gameState.turnOfPlayer = username;
+    gameState.playerPoints[username] = 0;
+    gameState.playerHands[username] = getRandomStartingHand();
+    if (gameState.turnOfPlayer === '')
+        gameState.turnOfPlayer = username;
     return true;
 };
 var getUser = function (username) {
@@ -142,7 +146,6 @@ var getUser = function (username) {
     }
     return undefined;
 };
-var password = "kala";
 var users = [];
 var TileType;
 (function (TileType) {
@@ -255,17 +258,13 @@ var getRandomStartingHand = function () {
     return retArr;
 };
 var gameBoard = generateEmptyGameBoard();
-var initialGameState = {
-    playerPoints: {
-        "Player1": 0,
-        "Player2": 0
-    },
-    turnOfPlayer: "Player1",
-    pouchLetters: pouchLetters,
-    playerHands: {
-        "Player1": getRandomStartingHand(),
-        "Player2": getRandomStartingHand()
-    },
-    board: gameBoard
+var createInitialGameState = function () {
+    return {
+        playerPoints: {},
+        turnOfPlayer: '',
+        pouchLetters: pouchLetters,
+        playerHands: {},
+        board: gameBoard
+    };
 };
-var gameState = initialGameState;
+var gameState = createInitialGameState();
