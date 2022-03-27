@@ -56,6 +56,10 @@ export const useGameState = () => {
         setGameState(resp.data);
     };
 
+    const sendNewGameRequest = async() => {
+        const resp = await axios.get(BE_URL + "/newgame");
+    };
+
     useEffect(() => {
 
         let client = new W3CWebSocket(BE_WS_URL);
@@ -74,10 +78,22 @@ export const useGameState = () => {
 
     const getPlayers = (): string[] => Object.keys(gameState.playerHands);
 
+    const fillPlayerHand = (gs : GameState, playerName : string) => {
+        const playerHand = gs.playerHands[playerName];
+        while( playerHand.length < 7 && gs.pouchLetters.length !== 0 ) {
+
+            const idx = Math.floor((Math.random() * gs.pouchLetters.length));
+            const newLetter = gs.pouchLetters[idx];
+            playerHand.push(newLetter);
+            gs.pouchLetters.splice(idx,1);
+        }
+    };
+
     const togglePlayerTurn = useCallback(async () => {
         const gameStateCopy = copyState();
         const nextPlayer = getNextPlayer();
         gameStateCopy.turnOfPlayer = nextPlayer;
+        fillPlayerHand(gameStateCopy, getCurrentPlayerName());
         await sendGameStateToBE(gameStateCopy);
     }, [copyState, players]);
 
@@ -93,6 +109,10 @@ export const useGameState = () => {
     const moveLetterToPouchFromHand = async (letter: LetterTile) => {
         const gameStateCopy = copyState();
 
+        //make sure letter was in hand, prevent board->pouch movement
+        if( gameStateCopy.playerHands[getCurrentPlayerName()].findIndex( (handLetter) => handLetter.id === letter.id ) === -1 )
+            return;
+            
         const idx = gameStateCopy.playerHands[getCurrentPlayerName()].findIndex(l => l.id === letter.id);
         gameStateCopy.playerHands[getCurrentPlayerName()].splice(idx, 1);
         gameStateCopy.pouchLetters.push(letter);
@@ -104,7 +124,6 @@ export const useGameState = () => {
         if (idx === -1) return;
 
         const gameStateCopy = copyState();
-
         gameStateCopy.pouchLetters.splice(idx, 1);
         gameStateCopy.playerHands[getCurrentPlayerName()].push(letter);
 
@@ -194,6 +213,7 @@ export const useGameState = () => {
         moveLetterToPouchFromHand,
         updatePlayerPoints,
         moveLetterFromBoardToBoard,
-        moveLetterFromBoardToHand
+        moveLetterFromBoardToHand,
+        sendNewGameRequest
     }
 }

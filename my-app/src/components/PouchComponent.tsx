@@ -7,7 +7,6 @@ import { LetterTileTransferData } from './LetterTileComponent';
 
 export type PouchComponentProps = {
   letters: LetterTile[];
-  moveLetterToHandFromPouch: (letter: LetterTile) => Promise<void>;
   tileDropped : (tile : LetterTile, dropType : TileDropType,x: number, y: number) => void;
 }
 
@@ -19,12 +18,6 @@ export const PouchComponent = (props) => {
     width: "80px",
     height: "80px",
   };
-
-  const handlePouchClicked = useCallback(async () => {
-    if (props.letters.length <= 0) return;
-    const idx = Math.floor((Math.random() * props.letters.length));
-    await props.moveLetterToHandFromPouch(props.letters[idx]);
-  }, [props]);
 
   const handleSvgMouseOver = useCallback(() => {
     setMouseOver(true);
@@ -51,7 +44,7 @@ export const PouchComponent = (props) => {
 
   return (
     <div onDragOver={handleDragOver}  onDrop={handleDragDrop} id={'pouch'} style={{ cursor: "pointer" }}>
-      <svg onDragOver={handleDragOver}  onDrop={handleDragDrop} onClick={handlePouchClicked} onMouseLeave={handleSvgMouseOut} onMouseOver={handleSvgMouseOver} style={style} version="1.0" xmlns="http://www.w3.org/2000/svg"
+      <svg onDragOver={handleDragOver}  onDrop={handleDragDrop} onMouseLeave={handleSvgMouseOut} onMouseOver={handleSvgMouseOver} style={style} version="1.0" xmlns="http://www.w3.org/2000/svg"
         width="924.000000pt" height="1280.000000pt" viewBox="0 0 924.000000 1280.000000"
         preserveAspectRatio="xMidYMid meet">
         <metadata>
@@ -75,7 +68,6 @@ export const PouchComponent = (props) => {
       <LetterCountDiv
       onDrop={handleDragDrop} 
       onDragOver={handleDragOver} 
-        onClick={handlePouchClicked}
         onMouseLeave={() => { setMouseOver(false); }}
         onMouseOver={() => { setMouseOver(true); }}>{props.letters.length}
       </LetterCountDiv>

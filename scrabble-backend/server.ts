@@ -112,9 +112,15 @@ app.get("/users", (req, res) => {
 });
 
 app.get("/reset", (req, res) => {
-    gameState = createInitialGameState();
+    gameState = createInitialGameState(false);
     users = [];
     res.send("Game reset");
+});
+
+app.get("/newgame", (req, res) => {
+    gameState = createInitialGameState(true);
+    broadCastGameState();
+    res.send("New game started");
 });
 
 const addUser = (username: string) => {
@@ -219,30 +225,34 @@ const pouchLetters = [
     ...createNewLettersTiles("Ö",3,2),
 ];
 */
-const pouchLetters = [
-    ...createNewLettersTiles("A",1,6),
-    ...createNewLettersTiles("D",7,1),
-    ...createNewLettersTiles("E",1,3),
-    ...createNewLettersTiles("G",8,1),
-    ...createNewLettersTiles("H",4,3),
-    ...createNewLettersTiles("I",1,3),
-    ...createNewLettersTiles("J",4,1),
-    ...createNewLettersTiles("K",2,2),
-    ...createNewLettersTiles("L",2,2),
-    ...createNewLettersTiles("M",3,1),
-    ...createNewLettersTiles("N",1,3),
-    ...createNewLettersTiles("O",2,4),
-    ...createNewLettersTiles("P",4,1),
-    ...createNewLettersTiles("R",4,2),
-    ...createNewLettersTiles("S",1,2),
-    ...createNewLettersTiles("T",1,3),
-    ...createNewLettersTiles("U",3,2),
-    ...createNewLettersTiles("V",4,1),
-    ...createNewLettersTiles("Y",4,1),
-    ...createNewLettersTiles("-",0,1),
-    ...createNewLettersTiles("Ä",2,1),
-    ...createNewLettersTiles("Ö",3,1),
-];
+
+
+const createPouchLetters = () => {
+    return [
+        ...createNewLettersTiles("A",1,6),
+        ...createNewLettersTiles("D",7,1),
+        ...createNewLettersTiles("E",1,3),
+        ...createNewLettersTiles("G",8,1),
+        ...createNewLettersTiles("H",4,3),
+        ...createNewLettersTiles("I",1,3),
+        ...createNewLettersTiles("J",4,1),
+        ...createNewLettersTiles("K",2,2),
+        ...createNewLettersTiles("L",2,2),
+        ...createNewLettersTiles("M",3,1),
+        ...createNewLettersTiles("N",1,3),
+        ...createNewLettersTiles("O",2,4),
+        ...createNewLettersTiles("P",4,1),
+        ...createNewLettersTiles("R",4,2),
+        ...createNewLettersTiles("S",1,2),
+        ...createNewLettersTiles("T",1,3),
+        ...createNewLettersTiles("U",3,2),
+        ...createNewLettersTiles("V",4,1),
+        ...createNewLettersTiles("Y",4,1),
+        ...createNewLettersTiles("-",0,1),
+        ...createNewLettersTiles("Ä",2,1),
+        ...createNewLettersTiles("Ö",3,1),
+    ];
+}
 
 export type BoardTile = {
     tileType: TileType,
@@ -312,22 +322,33 @@ const generateEmptyGameBoard = () => {
 const getRandomStartingHand = () => {
     const retArr = [];
     for(let i = 0; i < 7; i++) {
-        const idx = Math.floor((Math.random() * pouchLetters.length));
-        retArr.push(...pouchLetters.splice(idx,1));
+        const idx = Math.floor((Math.random() * gameState.pouchLetters.length));
+        retArr.push(...gameState.pouchLetters.splice(idx,1));
     }
     return retArr;
 }
 
 let gameBoard = generateEmptyGameBoard();
 
-const createInitialGameState = () : GameState => {
-    return {
+const createInitialGameState = (retainPlayerData : boolean) : GameState => {
+
+    const newGameState : GameState = {
         playerPoints: {},
-        turnOfPlayer: '',
-        pouchLetters: pouchLetters,
+        turnOfPlayer: retainPlayerData ? gameState.turnOfPlayer : '',
+        pouchLetters: createPouchLetters(),
         playerHands: {},
         board: gameBoard
+    };
+
+    if( retainPlayerData ) {
+        users.forEach( username => {
+            newGameState.playerHands[username] = getRandomStartingHand();
+            newGameState.playerPoints[username] = 0;
+        });
+        newGameState.turnOfPlayer = gameState.turnOfPlayer;
     }
+
+    return newGameState;
 }
 
-let gameState = createInitialGameState();
+let gameState = createInitialGameState(false);

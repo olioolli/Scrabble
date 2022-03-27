@@ -19,33 +19,19 @@ reportWebVitals();
 /*
 TASKS
 
-Iteration 1
+Iteration 1 (DONE)
 
--Get rid of warnings pt2
--Login (player name) (DONE)
--List player names (DONE)
-
--Visual improvements
- *Hand (DONE)
- *Tiles (DONE)
- *Board (DONE)
- *PlayerInfo (DONE)
-
--tile broken vertical alignment (caused by special board tiles) (DONE)
- *Move board tile text to it's own element (DONE)
- *Fix alignment (DONE)
--auto draw initial 7 tiles (DONE)
--re-arrange hand during opps turn (DONE)
--Send point updates to backend (DONE)
--reduce letter count / timer (DONE)
+-Draw upto 7 on end turn (DONE)
+-Prevent manual draw (DONE)
+-Tile disappear? (id issues related? DONE?)
 
 2nd Iteration
-*Setup view before game starts
-*Single URL for all players
-*support for 'several' players
-*more visual improvements
-*small screen scaling
-*Add reset game button somewhere
-*Indicate which player's screen is currently visible
+
+*Add new game button somewhere (DONE)
+
+*Improve login screen (toasts, visuals etc.)
+*more visual improvements (Icons, logos, etc.)
 *Performance enhancements: Add useCallbacks etc
+*Get rid of warnings pt2
+*Env file for IP setup
 */

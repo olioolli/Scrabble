@@ -122,9 +122,14 @@ app.get("/users", function (req, res) {
     res.send(JSON.stringify(users));
 });
 app.get("/reset", function (req, res) {
-    gameState = createInitialGameState();
+    gameState = createInitialGameState(false);
     users = [];
     res.send("Game reset");
+});
+app.get("/newgame", function (req, res) {
+    gameState = createInitialGameState(true);
+    broadCastGameState();
+    res.send("New game started");
 });
 var addUser = function (username) {
     if (getUser(username))
@@ -212,7 +217,9 @@ const pouchLetters = [
     ...createNewLettersTiles("Ö",3,2),
 ];
 */
-var pouchLetters = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], createNewLettersTiles("A", 1, 6), true), createNewLettersTiles("D", 7, 1), true), createNewLettersTiles("E", 1, 3), true), createNewLettersTiles("G", 8, 1), true), createNewLettersTiles("H", 4, 3), true), createNewLettersTiles("I", 1, 3), true), createNewLettersTiles("J", 4, 1), true), createNewLettersTiles("K", 2, 2), true), createNewLettersTiles("L", 2, 2), true), createNewLettersTiles("M", 3, 1), true), createNewLettersTiles("N", 1, 3), true), createNewLettersTiles("O", 2, 4), true), createNewLettersTiles("P", 4, 1), true), createNewLettersTiles("R", 4, 2), true), createNewLettersTiles("S", 1, 2), true), createNewLettersTiles("T", 1, 3), true), createNewLettersTiles("U", 3, 2), true), createNewLettersTiles("V", 4, 1), true), createNewLettersTiles("Y", 4, 1), true), createNewLettersTiles("-", 0, 1), true), createNewLettersTiles("Ä", 2, 1), true), createNewLettersTiles("Ö", 3, 1), true);
+var createPouchLetters = function () {
+    return __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], createNewLettersTiles("A", 1, 6), true), createNewLettersTiles("D", 7, 1), true), createNewLettersTiles("E", 1, 3), true), createNewLettersTiles("G", 8, 1), true), createNewLettersTiles("H", 4, 3), true), createNewLettersTiles("I", 1, 3), true), createNewLettersTiles("J", 4, 1), true), createNewLettersTiles("K", 2, 2), true), createNewLettersTiles("L", 2, 2), true), createNewLettersTiles("M", 3, 1), true), createNewLettersTiles("N", 1, 3), true), createNewLettersTiles("O", 2, 4), true), createNewLettersTiles("P", 4, 1), true), createNewLettersTiles("R", 4, 2), true), createNewLettersTiles("S", 1, 2), true), createNewLettersTiles("T", 1, 3), true), createNewLettersTiles("U", 3, 2), true), createNewLettersTiles("V", 4, 1), true), createNewLettersTiles("Y", 4, 1), true), createNewLettersTiles("-", 0, 1), true), createNewLettersTiles("Ä", 2, 1), true), createNewLettersTiles("Ö", 3, 1), true);
+};
 var N0R = 0, X2W = 1, X3W = 2, X2L = 3, X3L = 4, CNT = 5;
 var gameBoardTemplate = [
     [X3W, N0R, N0R, X2W, N0R, N0R, N0R, X3W, N0R, N0R, X2W, N0R, N0R, N0R, X3W],
@@ -252,19 +259,27 @@ var generateEmptyGameBoard = function () {
 var getRandomStartingHand = function () {
     var retArr = [];
     for (var i = 0; i < 7; i++) {
-        var idx = Math.floor((Math.random() * pouchLetters.length));
-        retArr.push.apply(retArr, pouchLetters.splice(idx, 1));
+        var idx = Math.floor((Math.random() * gameState.pouchLetters.length));
+        retArr.push.apply(retArr, gameState.pouchLetters.splice(idx, 1));
     }
     return retArr;
 };
 var gameBoard = generateEmptyGameBoard();
-var createInitialGameState = function () {
-    return {
+var createInitialGameState = function (retainPlayerData) {
+    var newGameState = {
         playerPoints: {},
-        turnOfPlayer: '',
-        pouchLetters: pouchLetters,
+        turnOfPlayer: retainPlayerData ? gameState.turnOfPlayer : '',
+        pouchLetters: createPouchLetters(),
         playerHands: {},
         board: gameBoard
     };
+    if (retainPlayerData) {
+        users.forEach(function (username) {
+            newGameState.playerHands[username] = getRandomStartingHand();
+            newGameState.playerPoints[username] = 0;
+        });
+        newGameState.turnOfPlayer = gameState.turnOfPlayer;
+    }
+    return newGameState;
 };
-var gameState = createInitialGameState();
+var gameState = createInitialGameState(false);

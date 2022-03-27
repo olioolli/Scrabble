@@ -9,18 +9,21 @@ import { getCurrentPlayerName } from '../util/utils';
 import { useGameState } from '../util/GameStateProvider';
 import { useCallback } from 'react';
 import { PlayerInfo } from './PlayerInfoComponent';
+import { DialogComponent } from './DialogComponent';
 
 export const GameBoardComponent = () => {
 
     const { gameState, 
         moveLetterFromHandToBoard, 
-        moveLetterToHandFromPouch, 
         getPlayers, 
         togglePlayerTurn, 
         moveLetterToPouchFromHand,
         updatePlayerPoints,
         moveLetterFromBoardToBoard,
-        moveLetterFromBoardToHand } = useGameState();
+        moveLetterFromBoardToHand,
+        sendNewGameRequest } = useGameState();
+
+    const [ isPopupVisible, setPopupVisible ] = useState(false);
 
     const handleLetterTileDrop = async (letterTile: LetterTile,dropType: TileDropType, x: number, y: number, newX?: number, newY?: number) => {
         if (dropType === TileDropType.HAND_TO_POUCH )
@@ -64,30 +67,43 @@ export const GameBoardComponent = () => {
                             </BoardTileComponent>))
                     ))}
                 </BoardComponent>
-                <PlayerContainer>
-                {getPlayers().map(player => (
+
+                <RightPanel>
+                    <PlayerContainer>
+                    {getPlayers().map(player => (
                         <PlayerInfo isActive={gameState.turnOfPlayer === player} key={player} points={gameState.playerPoints[player]} name={player} pointsUpdated={handlePointsUpdated}></PlayerInfo>
-                    ))
-                }
-                <EndTurnButton onClick={handleEndTurnClicked} >End turn</EndTurnButton>
-                </PlayerContainer>
+                        ))}
+                    </PlayerContainer>
+                    <EndTurnButton onClick={handleEndTurnClicked} >End turn</EndTurnButton>
+                    <EndTurnButton onClick={ () => { setPopupVisible(true)}}>New game</EndTurnButton>
+                </RightPanel>
                 <BottomContainer>
                     <HandComponent tileDropped={handleLetterTileDrop} letters={gameState.playerHands[getCurrentPlayerName()] !== undefined ? gameState.playerHands[getCurrentPlayerName()] : []} />
                     <PouchComponent
                         letters={gameState.pouchLetters !== undefined ? gameState.pouchLetters : []}
-                        moveLetterToHandFromPouch={moveLetterToHandFromPouch}
                         tileDropped= {handleLetterTileDrop}
                     />
                 </BottomContainer>
             </MainDiv>
+            {isPopupVisible ? <DialogComponent 
+                text={"Really start a new game?"} okText={"OK"} cancelText={"Cancel"}
+                cancelClicked={ () => setPopupVisible(false) }
+                okClicked={ () => {
+                    sendNewGameRequest();
+                    setPopupVisible(false);
+                }}
+                ></DialogComponent> : <></>}
         </div>
     );
 }
 
-const PlayerContainer = styled.div`
+const RightPanel = styled.div`
     position: absolute;
     right: 10%;
     top: 1px;
+`;
+
+const PlayerContainer = styled.div`
     display: flex;
     justify-content: space-evenly;
     flex-direction: column;

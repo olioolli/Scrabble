@@ -12,6 +12,7 @@ import { isLoggedIn, login } from './util/utils';
 import axios from 'axios';
 import { BE_URL } from './state';
 import { toast } from 'react-toastify';
+import ScrabbleLogo from './components/ScrabbleLogo';
 
 function App() {
 
@@ -63,40 +64,49 @@ const PlayerSelectView = () => {
   };
 
   return (
-    <PlayerSelectContainer>
-      <TitleText>Scrabble 5000</TitleText>
-      <TitleH2>Insert username</TitleH2>
-      <TextField ref={usernameRef} placeholder={"Username"}></TextField>
-      <Button onClick={() => logUserIn()}>Enter</Button>
-    </PlayerSelectContainer>
+    <LoginMainDiv>
+      <ScrabbleLogo></ScrabbleLogo>
+      <PlayerSelectContainer>
+        <TitleH2>Insert username</TitleH2>
+        <TextField ref={usernameRef} placeholder={"Username"}></TextField>
+        <Button onClick={() => logUserIn()}>Enter</Button>
+      </PlayerSelectContainer>
+    </LoginMainDiv>
   );
 
 }
 
+const LoginMainDiv = styled.div`
+display: flex;
+flex-direction: column;
+align-items: center;
+`;
+
 const TitleH2 = styled.h2`
   font-weight: normal;
+  margin-bottom: 25px;
+    margin-top: 2px;
 `;
 
 const Button = styled.button`
 padding: 15px;
-    margin-top: 10px;
+    margin-top: 20px;
     width: 150px;
-    border: 2px solid #386383;
-    border-radius: 3px;
+    border: 1px solid #386383;
+    border-radius: 10px;
     background: #0e1d21;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
 }
 `;
 
 const TextField = styled.input`
-font-size: 20px;
-    height: 20px;
-    padding: 20px;
-    border: 2px solid #386383;
+    padding: 14px;
+    border: 1px solid #386383;
     border-radius: 3px;
     background: #0e1d21;
     color: white;
+    text-align: center;
 `;
 
 const TitleText = styled.p`
@@ -114,7 +124,11 @@ const PlayerSelectContainer = styled.div`
     flex-direction: column;
     align-content: center;
     align-items: center;
-    margin-top:10%;
+    background: #cf181f;
+    padding: 14px;
+    border-radius: 6px;
+    width: 301px;
+    border: 1px solid #ffffff7a;
   `;
 
 export default App;
