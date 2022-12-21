@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { LetterTile } from '../../../scrabble-backend/server';
+import { isMobileScreenWidth } from '../util/utils';
 
 export type LetterTileTransferData = {
     letterTile : LetterTile;
@@ -11,8 +12,11 @@ export type LetterProps = {
     leftPos: string;
     letter : LetterTile
     tileDropped? : (letter : LetterTile, targetLetter : LetterTile) => void;
+    tileClicked? : (targetLetter : LetterTile) => void;
     isPlacedOnSpecialTile? : boolean;
     isPlacedOnHand? : boolean;
+    isSelected: boolean;
+    setSelectedLetterTile: React.Dispatch<React.SetStateAction<LetterTile | undefined>>;
 };
 
 const getLetterTransferData = (letterTile : LetterTile, elementId : string ) => {
@@ -22,16 +26,10 @@ const getLetterTransferData = (letterTile : LetterTile, elementId : string ) => 
     }
 };
 
-let idCounter = 0;
-
 export const LetterTileComponent = (props : LetterProps) => {
 
-    const id = idCounter++;
+    const isMobile = isMobileScreenWidth();
     const elementId = "letterTile_"+props.letter.id;
-
-    const style = {
-        left: props.leftPos+"px"
-    }
 
     const handleDragStart = (e) => {
         e.dataTransfer.setData("text/plain", JSON.stringify(getLetterTransferData(props.letter, elementId)));
@@ -47,10 +45,30 @@ export const LetterTileComponent = (props : LetterProps) => {
             props.tileDropped(letterTile, props.letter);
     }
 
-    const tileStyle = props.isPlacedOnSpecialTile ? "letterTile letterTileTopFix" : props.isPlacedOnHand ? "letterTile letterTileOnHand" : "letterTile";
+    const handleClick = () => {
+        if( !isMobile ) return;
+
+        if( props.tileClicked )
+            props.tileClicked(props.letter);
+
+        props.setSelectedLetterTile(props.isSelected ? undefined : props.letter);
+    }
+
+    const getTileStyle = () => {
+
+        const isSelectedStyle = props.isSelected ? ' letterTile-selected' : '';
+        const isMobileStyle = isMobile ? ' letterTile-onBoard-mobile' : '';
+        if( props.isPlacedOnSpecialTile )
+            return "letterTile letterTileTopFix"+isSelectedStyle+isMobileStyle;
+
+        if( props.isPlacedOnHand )
+            return "letterTile letterTileOnHand"+isSelectedStyle;
+        else 
+            return "letterTile"+isSelectedStyle+isMobileStyle;
+    }
 
     return (
-        <div onDrop={handleDragDrop} onDragStart={ handleDragStart } draggable="true" className={tileStyle} id={elementId}>
+        <div onClick={handleClick} onDrop={handleDragDrop} onDragStart={ handleDragStart } draggable="true" className={getTileStyle()} id={elementId}>
             {props.letter.letter}
             <div className="letterPoint">
                 {props.letter.points}

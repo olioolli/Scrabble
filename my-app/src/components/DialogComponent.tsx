@@ -49,6 +49,7 @@ position: absolute;
     box-shadow: 5px 5px 15px 5px rgb(0 0 0 / 20%);
     justify-content: space-around;
     align-items: center;
+    z-index: 20000
 `;
 
 const ButtonOk = styled.button`

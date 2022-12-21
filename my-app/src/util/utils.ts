@@ -6,6 +6,8 @@ export const getCurrentPlayerName = (): string => {
     return document.cookie;
 }
 
+export const isMobileScreenWidth = () => window.innerWidth < 600;
+
 export const isLoggedIn = () => {
     if( document.cookie === '' )
         return false;

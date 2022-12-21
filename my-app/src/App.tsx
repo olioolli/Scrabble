@@ -26,8 +26,6 @@ function App() {
     axios.get(BE_URL + "/isLoggedIn?username=" + document.cookie).then((response) => {
       if (response.status == 200) {
         const data = response.data;
-        console.log("IS logged in user: "+document.cookie);
-        console.log("GOT RESP: "+data.isLoggedIn);
         setIsUserLoggedIn(data.isLoggedIn);
       }
       else
@@ -84,7 +82,7 @@ align-items: center;
 
 const TitleH2 = styled.h2`
   font-weight: normal;
-  margin-bottom: 25px;
+  margin-bottom: 25px;  
     margin-top: 2px;
 `;
 
@@ -109,26 +107,18 @@ const TextField = styled.input`
     text-align: center;
 `;
 
-const TitleText = styled.p`
-font-size: 60px;
-color: #386383;
-`;
-
-const PlayerLink = styled.a`
-    font-size: 20px;
-`;
-
 const PlayerSelectContainer = styled.div`
     display: flex;
     color: white;
     flex-direction: column;
     align-content: center;
     align-items: center;
-    background: #cf181f;
-    padding: 14px;
-    border-radius: 6px;
+    padding: 20px;
     width: 301px;
-    border: 1px solid #ffffff7a;
+    border: 1px #506483;
+    border-radius: 8px;
+    background: #081a1a;
+    border-style: double;
   `;
 
 export default App;

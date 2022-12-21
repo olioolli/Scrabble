@@ -1,15 +1,15 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { BoardTileComponent, TileDropType } from './BoardTileComponent';
 import { HandComponent } from './HandComponent';
 import { PouchComponent } from './PouchComponent';
-import { BoardTile, GameState, LetterTile } from '../../../scrabble-backend/server';
-import { getCurrentPlayerName } from '../util/utils';
+import { LetterTile } from '../../../scrabble-backend/server';
+import { getCurrentPlayerName, isMobileScreenWidth } from '../util/utils';
 import { useGameState } from '../util/GameStateProvider';
 import { useCallback } from 'react';
 import { PlayerInfo } from './PlayerInfoComponent';
 import { DialogComponent } from './DialogComponent';
+import { PlayerInfoPopupComponent } from './PlayerInfoPopupComponent';
 
 export const GameBoardComponent = () => {
 
@@ -24,6 +24,10 @@ export const GameBoardComponent = () => {
         sendNewGameRequest } = useGameState();
 
     const [ isPopupVisible, setPopupVisible ] = useState(false);
+    const [ selectedLetterTile, setSelectedLetterTile ] = useState<LetterTile|undefined>();
+    const [ openWndPlayerName, setOpenWndPlayerName ] = useState<string|undefined>();
+
+    const isMobile = isMobileScreenWidth();
 
     const handleLetterTileDrop = async (letterTile: LetterTile,dropType: TileDropType, x: number, y: number, newX?: number, newY?: number) => {
         if (dropType === TileDropType.HAND_TO_POUCH )
@@ -34,6 +38,8 @@ export const GameBoardComponent = () => {
             await moveLetterFromBoardToHand(letterTile);
         else
             await moveLetterFromBoardToBoard(letterTile, x, y);
+        
+        setSelectedLetterTile(undefined)
     };
 
     const handleEndTurnClicked = useCallback(async () => {
@@ -50,11 +56,17 @@ export const GameBoardComponent = () => {
 
     return (
         <div>
+            {openWndPlayerName && 
+                <PlayerInfoPopupComponent 
+                    pointsUpdated={handlePointsUpdated} 
+                    name={openWndPlayerName} 
+                    points={gameState.playerPoints[openWndPlayerName]}
+                    setOpenWndPlayerName={setOpenWndPlayerName}></PlayerInfoPopupComponent>}
             <MainDiv>
                 {
                     isCurrentPlayerActive() ? <></> : <InactivePlayerBlocker>Not your turn</InactivePlayerBlocker>
                 }
-                <BoardComponent>
+                <div className='board'>
                     {gameState.board.map((x, y) => (
                         x.map((tile, i) => (
                             <BoardTileComponent
@@ -63,25 +75,40 @@ export const GameBoardComponent = () => {
                                 tileXPos={y}
                                 tileYPos={i}
                                 tileDropped={handleLetterTileDrop}
+                                selectedLetterTile={selectedLetterTile}
+                                setSelectedLetterTile={setSelectedLetterTile}
                                 tileType={tile.tileType}>
                             </BoardTileComponent>))
                     ))}
-                </BoardComponent>
+                </div>
 
-                <RightPanel>
-                    <PlayerContainer>
+                <div className='rightPanel'>
+                    <div className='playerContainer'>
                     {getPlayers().map(player => (
-                        <PlayerInfo isActive={gameState.turnOfPlayer === player} key={player} points={gameState.playerPoints[player]} name={player} pointsUpdated={handlePointsUpdated}></PlayerInfo>
+                        <PlayerInfo isActive={gameState.turnOfPlayer === player} 
+                        key={player} 
+                        points={gameState.playerPoints[player]} 
+                        name={player} 
+                        pointsUpdated={handlePointsUpdated}
+                        playerInfoClicked={ (playerName) => setOpenWndPlayerName(playerName)}></PlayerInfo>
                         ))}
-                    </PlayerContainer>
-                    <EndTurnButton onClick={handleEndTurnClicked} >End turn</EndTurnButton>
-                    <EndTurnButton onClick={ () => { setPopupVisible(true)}}>New game</EndTurnButton>
-                </RightPanel>
-                <BottomContainer>
-                    <HandComponent tileDropped={handleLetterTileDrop} letters={gameState.playerHands[getCurrentPlayerName()] !== undefined ? gameState.playerHands[getCurrentPlayerName()] : []} />
+                    </div>
+                    <div className='rightPanelButtonContainer'>
+                        <EndTurnButton onClick={handleEndTurnClicked} >End turn</EndTurnButton>
+                        <EndTurnButton onClick={ () => { setPopupVisible(true)}}>New game</EndTurnButton>
+                    </div>
+                </div>
+                <BottomContainer mobileMode={isMobile}>
+                    <HandComponent 
+                    tileDropped={handleLetterTileDrop} 
+                    selectedLetterTile={selectedLetterTile}
+                    setSelectedLetterTile={setSelectedLetterTile}
+                    letters={gameState.playerHands[getCurrentPlayerName()] !== undefined ? gameState.playerHands[getCurrentPlayerName()] : []} />
                     <PouchComponent
                         letters={gameState.pouchLetters !== undefined ? gameState.pouchLetters : []}
                         tileDropped= {handleLetterTileDrop}
+                        selectedLetterTile={selectedLetterTile}
+                        setSelectedLetterTile={setSelectedLetterTile}
                     />
                 </BottomContainer>
             </MainDiv>
@@ -96,23 +123,6 @@ export const GameBoardComponent = () => {
         </div>
     );
 }
-
-const RightPanel = styled.div`
-    position: absolute;
-    right: 10%;
-    top: 1px;
-`;
-
-const PlayerContainer = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    flex-direction: column;
-    border: 1px solid #ffffff;
-    padding: 5px;
-    margin-top: 10px;
-    border-radius: 4px;
-    background: #636a3f;
-    `;
 
 const EndTurnButton = styled.button`
 width: 100px;
@@ -144,25 +154,11 @@ const InactivePlayerBlocker = styled.div`
   opacity: 0.6;
 `;
 
-const MainContainer = styled.div`
-	dispaly: flex;
-`;
-
 const BottomContainer = styled.div`
 	display: flex;
 	justify-content: center;
     margin-top: 10px;
-`;
-
-const BoardComponent = styled.div`
-display: grid;
-    grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
-    background-color: #2e4289;
-    padding: 2px;
-    width: 718px;
-    margin: auto;
-    margin-top: 5px;
-    padding: 8px;
-    padding-right: 8px;
-    border-radius: 3px;
+    flex-wrap: wrap;
+    flex-direction: ${props => props.mobileMode ? 'column' : 'initial'};
+    align-items: ${props => props.mobileMode ? 'center' : 'initial'};
 `;

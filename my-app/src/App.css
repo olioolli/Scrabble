@@ -41,7 +41,6 @@ body {
 
   height: 100%;
   background-color: #081313;
-  margin-top: 50px;
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -56,7 +55,6 @@ body {
   height: 20px;
   width: 20px;
   z-index: 9;
-  background-color: #f1f1f1;
   text-align: center;
   border: 1px solid #d3d3d3;
   background-color: yellow;
@@ -68,8 +66,27 @@ body {
   font-size: 15px;
 }
 
+.letterTile-selected {
+  background-color: blue;
+}
+
+.letterTile-onBoard-mobile {
+  width: 1rem;
+  height: 1rem;
+  padding: 1px; 
+  font-size: 0.8rem;
+}
+
+.letterTile-onBoard-mobile > div {
+  font-size: 5px;
+}
+
 .letterTileTopFix {
   top: -27px;
+}
+
+.letterTile .letterTileTopFix .letterTile-onBoard-mobile {
+  top: -15px !important;
 }
 
 .letterTileOnHand {
@@ -90,6 +107,70 @@ body {
   width: 38px;
   height: 38px;
   user-select: none;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+  background-color: #2e4289;
+  padding: 2px;
+  width: 718px;
+  margin: auto;
+  margin-top: 5px;
+  padding: 8px;
+  padding-right: 8px;
+  border-radius: 3px;
+}
+
+.playerContainer {
+  display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    border: 1px solid #ffffff;
+    padding: 5px;
+    margin-top: 10px;
+    border-radius: 4px;
+    background: #636a3f;
+}
+
+.rightPanel {
+  position: absolute;
+    right: 10%;
+    top: 1px;
+}
+
+@media only screen and (max-width: 600px) {
+  .grid-item {
+    width: 1rem;
+    height: 1rem;
+    padding:2px;
+  }
+
+  .board {
+    width: 20rem;
+    padding:3px 13px 3px 3px;
+  }
+
+  .playerContainer {
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
+  .playerContainer div {
+    padding: 0px;
+  }
+
+  .rightPanel {
+    right: initial;
+    top: initial;
+    bottom: -3rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .rightPanelButtonContainer {
+    display: flex;
+  }
 }
 
 .grid-item-double-word {

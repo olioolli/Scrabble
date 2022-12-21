@@ -11,7 +11,7 @@ export const usePlayers = () => {
  };
 }
 
-const BE_IP = "localhost";
+const BE_IP = "192.168.1.176";
 
 export const BE_URL = "http://"+BE_IP+":5000";
 

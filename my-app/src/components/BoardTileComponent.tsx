@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { LetterTile } from '../../../scrabble-backend/server';
+import { isMobileScreenWidth } from '../util/utils';
 import { LetterTileComponent, LetterTileTransferData } from './LetterTileComponent';
 
 export const N0R = 0,
@@ -23,9 +24,14 @@ export type BoardTileComponentProps = {
     tileXPos : number,
     tileYPos : number,
     letterTile : LetterTile | undefined
+    selectedLetterTile: LetterTile | undefined;
+    setSelectedLetterTile: React.Dispatch<React.SetStateAction<LetterTile | undefined>>;
 };
 
 export const BoardTileComponent = (props) => {
+
+    const isMobile = isMobileScreenWidth();
+    const mainDivRef = useRef<HTMLDivElement>(null);
 
     const handleDragOver = (e) => {
         e.preventDefault();
@@ -58,15 +64,13 @@ export const BoardTileComponent = (props) => {
         return true;
     };
 
-    const handleDragDrop = (e) => {
-        e.preventDefault();
+    const placeLetterTileOnBoard = (letterData : LetterTile, target : HTMLElement) => {
 
-        if( !isDropAllowed(e.target) ) return;
+        if( !isDropAllowed(target) ) return;
 
-        const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
-        const letterTileEl = document.getElementById(letterTransferData.elementId);
-        const letterData = letterTransferData.letterTile;
-
+        const letterTileElementId = "letterTile_"+letterData.id;
+        const letterTileEl = document.getElementById(letterTileElementId);
+        
         // board tile to board tile
         if( isOnBoardDrag(letterTileEl) ) {
             props.tileDropped(letterData, TileDropType.BOARD_TO_BOARD, props.tileXPos, props.tileYPos);
@@ -74,24 +78,29 @@ export const BoardTileComponent = (props) => {
         }
 
         // Dropped on pouch
-        if( e.target.id === 'pouch' ) {
+        if( target.id === 'pouch' ) {
             props.tileDropped(letterData, TileDropType.HAND_TO_POUCH);
             return;
         }
 
-
         // Check if dropped on boardTile
-        if (!letterTileEl || !e.target.classList.contains("grid-item"))
+        if (!letterTileEl || !target.classList.contains("grid-item"))
             // check if dropped on special board tile (on the worddiv)
-            if( !letterTileEl || e.target.parentElement && !e.target.parentElement.classList.contains("grid-item"))
+            if( !letterTileEl || target.parentElement && !target.parentElement.classList.contains("grid-item"))
                 return;
 
         letterTileEl.style.left = "";
-        
-        const letter = letterTileEl.innerText.charAt(0);
-        const points = parseInt(letterTileEl.children[0].innerHTML);
 
         props.tileDropped(letterData, TileDropType.HAND_TO_BOARD, props.tileXPos, props.tileYPos);
+    }
+
+    const handleDragDrop = (e) => {
+        e.preventDefault();
+        
+        const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
+        const letterData = letterTransferData.letterTile;
+
+        placeLetterTileOnBoard(letterData, e.target);
     };
 
     const getTileStyle = (tileType) => {
@@ -121,15 +130,21 @@ export const BoardTileComponent = (props) => {
     const getTileTextFromProps = (tileType) => {
 
         if (tileType == X2W)
-            return "2xWord";
+            return isMobile ? "2xW" : "2xWord";
         else if (tileType == X3W)
-            return "3xWord";
+            return isMobile ? "3xW" : "3xWord";
         else if (tileType == X2L)
-            return "2xLetter";
+            return isMobile ? "2xL" : "2xLetter";
         else if (tileType == X3L)
-            return "3xLetter";
+            return isMobile ? "3xL" : "3xLetter";
 
         return "";
+    }
+
+    const isLetterTileSelected = () => {
+        if( !props.selectedLetterTile ) return false;
+
+        return props.selectedLetterTile.id === props.letterTile.id;
     }
 
     const getLetterTileFromProps = () => {
@@ -137,16 +152,30 @@ export const BoardTileComponent = (props) => {
             return null;
         
         return (
-            <LetterTileComponent isPlacedOnSpecialTile={ getTileTextFromProps(props.tileType) !== "" } letter={props.letterTile} leftPos={"0"}></LetterTileComponent>
+            <LetterTileComponent 
+            isSelected={isLetterTileSelected()}
+            setSelectedLetterTile={props.setSelectedLetterTile}
+            isPlacedOnSpecialTile={ getTileTextFromProps(props.tileType) !== "" } 
+            letter={props.letterTile} leftPos={"0"}></LetterTileComponent>
         )
+    }
+
+    const handleBoardTileClicked = () => {
+        if( !props.selectedLetterTile || !mainDivRef.current ) return;
+
+        placeLetterTileOnBoard(props.selectedLetterTile, mainDivRef.current)
     }
 
     return (
         <div className="grid-item" 
+        ref={mainDivRef}
+        onClick={handleBoardTileClicked}
         onDragOver={handleDragOver} 
         onDrop={handleDragDrop} 
         style={getTileStyle(props.tileType)}>
             <TileTextDiv
+                isMobile={isMobile}
+                isSpecialTile={props.tileType !== N0R}
                 onDragOver={handleDragOver} 
             >{getTileTextFromProps(props.tileType)}</TileTextDiv>
             {getLetterTileFromProps()}
@@ -155,7 +184,10 @@ export const BoardTileComponent = (props) => {
 }
 
 const TileTextDiv = styled.div`
-margin-top: 10px;
 font-style: italic;
-font-size: 10px;
+font-size: ${props => props.isMobile ? "8px" : "10px"};
+margin-top: ${props => props.isMobile ? "10px" : "10px"};
+text-align: center;
+position: ${props => props.isMobile ? "relative" : "initial"};
+bottom: ${props => props.isMobile ? "3px" : "initial"};
 `;

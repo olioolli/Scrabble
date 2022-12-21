@@ -9,6 +9,8 @@ import { TileDropType } from './BoardTileComponent';
 export type HandComponentProps = {
     letters: LetterTile[];
     tileDropped : (tile : LetterTile, dropType : TileDropType,x: number, y: number) => void;
+    selectedLetterTile: LetterTile | undefined;
+    setSelectedLetterTile: React.Dispatch<React.SetStateAction<LetterTile | undefined>>;
 }
 
 export const HandComponent = (props: HandComponentProps) => {
@@ -31,8 +33,6 @@ export const HandComponent = (props: HandComponentProps) => {
     }
 
     useEffect( () => {
-        //setLetterOrder(props.letters);
-        //setLetters(props.letters);
         setOrderedLetters(props.letters);
     },[props.letters, setOrderedLetters])
 
@@ -41,26 +41,10 @@ export const HandComponent = (props: HandComponentProps) => {
         return "" + leftPosNumber;
     }
 
-    const setLetterOrder = useCallback((letterTiles : LetterTile[]) => {
-        if( !letters ) return;
-
-        for(let i = 0; i < letterTiles.length; i++) {
-            const orderedIdx = letters.findIndex( l => l.id === letterTiles[i].id );
-            if( orderedIdx > -1 && i !== orderedIdx ) {
-                const temp = letterTiles[orderedIdx];
-                letterTiles[orderedIdx] = letters[i];
-                const tempIdx = letters.findIndex( ( stateLetter => stateLetter.id === temp.id ));
-                if( tempIdx > -1 )
-                    letterTiles[tempIdx] = temp;
-            }
-        }
-    },[letters]);
-
     const handleDragDrop = (e) => {
         e.preventDefault();
 
         const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
-        const letterTileEl = document.getElementById(letterTransferData.elementId);
         const letterTile = letterTransferData.letterTile;
         props.tileDropped(letterTile, TileDropType.BOARD_TO_HAND,-1,-1);
     };
@@ -79,14 +63,38 @@ export const HandComponent = (props: HandComponentProps) => {
         setLetters(handLettersCopy)
     }
 
+    const handleTileClicked = (targetLetter : LetterTile) => {
+        if( props.selectedLetterTile)
+            handleLetterDrop(props.selectedLetterTile,targetLetter);
+    }
+
     const handleDragOver = (e) => {
         e.preventDefault();
     };
 
+    const handleClick = () => {
+        if( !props.selectedLetterTile ) return;
+
+        props.tileDropped(props.selectedLetterTile, TileDropType.BOARD_TO_HAND,-1,-1);
+    }
+
+    const isTileSelected = (letterId : number) => {
+        if( !props.selectedLetterTile ) return false;
+
+        return letterId === props.selectedLetterTile.id;
+    }
+
     return (
-        <Div onDragOver={handleDragOver} onDrop={handleDragDrop}>
+        <Div onClick={handleClick} onDragOver={handleDragOver} onDrop={handleDragDrop}>
             {letters.map((letter, idx) => (
-                <LetterTileComponent key={idx} isPlacedOnHand={true} tileDropped = {handleLetterDrop} letter={letter} leftPos={calculateLeftPos(idx)}></LetterTileComponent>
+                <LetterTileComponent 
+                isSelected={isTileSelected(letter.id)} 
+                setSelectedLetterTile={props.setSelectedLetterTile}
+                key={idx} isPlacedOnHand={true} 
+                tileDropped = {handleLetterDrop} 
+                tileClicked= {handleTileClicked}
+                letter={letter} 
+                leftPos={calculateLeftPos(idx)}></LetterTileComponent>
             ))}
         </Div>
     )
@@ -95,7 +103,7 @@ export const HandComponent = (props: HandComponentProps) => {
 const Div = styled.div`
     margin-top: 10px;
     height: 50px;
-    width: 500px;
+    max-width: 500px;
     background-color: #636a3f;
     z-index: 10000;
     padding-left: 8px;

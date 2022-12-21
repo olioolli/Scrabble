@@ -2,17 +2,21 @@ import { useCallback } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { LetterTile } from '../../../scrabble-backend/server';
+import { isMobileScreenWidth } from '../util/utils';
 import { TileDropType } from './BoardTileComponent';
 import { LetterTileTransferData } from './LetterTileComponent';
 
 export type PouchComponentProps = {
   letters: LetterTile[];
   tileDropped : (tile : LetterTile, dropType : TileDropType,x: number, y: number) => void;
+  selectedLetterTile: LetterTile | undefined;
+  setSelectedLetterTile: React.Dispatch<React.SetStateAction<LetterTile | undefined>>;
 }
 
 export const PouchComponent = (props) => {
 
   const [isMouseOver, setMouseOver] = useState(false);
+  const isMobile = isMobileScreenWidth();
 
   const style = {
     width: "80px",
@@ -40,10 +44,23 @@ export const PouchComponent = (props) => {
 
   const handleDragOver = (e) => {
     e.preventDefault();
-};
+
+  };
+  const handleClick = () => {
+    if( !props.selectedLetterTile ) return;
+
+    props.setSelectedLetterTile(undefined);
+    props.tileDropped(props.selectedLetterTile, TileDropType.HAND_TO_POUCH);
+  }
+
+  const mainDivStyle = {
+    'cursor': 'pointer',
+    '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
+    'margin-top' : isMobile ? '1rem' : 'initial'
+  }
 
   return (
-    <div onDragOver={handleDragOver}  onDrop={handleDragDrop} id={'pouch'} style={{ cursor: "pointer" }}>
+    <div onClick={handleClick} onDragOver={handleDragOver}  onDrop={handleDragDrop} id={'pouch'} style={mainDivStyle}>
       <svg onDragOver={handleDragOver}  onDrop={handleDragDrop} onMouseLeave={handleSvgMouseOut} onMouseOver={handleSvgMouseOver} style={style} version="1.0" xmlns="http://www.w3.org/2000/svg"
         width="924.000000pt" height="1280.000000pt" viewBox="0 0 924.000000 1280.000000"
         preserveAspectRatio="xMidYMid meet">
@@ -51,7 +68,7 @@ export const PouchComponent = (props) => {
           Created by potrace 1.15, written by Peter Selinger 2001-2017
         </metadata>
         <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
-          fill={isMouseOver ? "cyan" : "#eef1e3"} stroke="none">
+          fill={isMouseOver && !isMobile ? "cyan" : "#eef1e3"} stroke="none">
           <path d="M5080 12790 c-91 -4 -190 -13 -220 -19 -30 -7 -138 -21 -240 -31
   -542 -59 -828 -105 -1100 -179 -41 -12 -131 -34 -200 -51 -962 -229 -1486
   -540 -1550 -920 -28 -165 19 -309 167 -518 162 -228 374 -462 759 -837 385

@@ -19,18 +19,12 @@ reportWebVitals();
 /*
 TASKS
 
-Iteration 1 (DONE)
-
--Draw upto 7 on end turn (DONE)
--Prevent manual draw (DONE)
--Tile disappear? (id issues related? DONE?)
-
-2nd Iteration
-
-*Add new game button somewhere (DONE)
-
+*New game doesn't draw letters
+*Special tile visibility under letter tile
+*Show hand size
 *Improve login screen (toasts, visuals etc.)
 *more visual improvements (Icons, logos, etc.)
+*Title, favicon
 *Performance enhancements: Add useCallbacks etc
 *Get rid of warnings pt2
 *Env file for IP setup
