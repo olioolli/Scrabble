@@ -8,10 +8,9 @@ import {
 import styled from 'styled-components';
 import { MainView } from './components/MainView';
 import { useEffect, useRef, useState } from 'react';
-import { isLoggedIn, login } from './util/utils';
+import { login } from './util/utils';
 import axios from 'axios';
 import { BE_URL } from './state';
-import { toast } from 'react-toastify';
 import ScrabbleLogo from './components/ScrabbleLogo';
 
 function App() {
