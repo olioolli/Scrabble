@@ -7,6 +7,7 @@ import * as http from 'http';
 
 const app = express();
 const PORT: Number = 5000;
+const WS_PORT = 443
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -38,7 +39,7 @@ wss.on('connection', (ws : ExtWebSocket) => {
     });
 });
 
-server.listen(process.env.PORT || 8999, () => {
+server.listen(process.env.PORT || WS_PORT, () => {
     console.log("Listening...");
 });
 

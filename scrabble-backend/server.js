@@ -39,6 +39,7 @@ var WebSocket = __importStar(require("ws"));
 var http = __importStar(require("http"));
 var app = (0, express_1.default)();
 var PORT = 5000;
+var WS_PORT = 443;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)());
@@ -57,7 +58,7 @@ wss.on('connection', function (ws) {
         ws.send("Received message: ".concat(message));
     });
 });
-server.listen(process.env.PORT || 8999, function () {
+server.listen(process.env.PORT || WS_PORT, function () {
     console.log("Listening...");
 });
 setInterval(function () {
