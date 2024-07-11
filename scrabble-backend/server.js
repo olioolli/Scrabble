@@ -52,11 +52,6 @@ wss.on('connection', function (ws) {
     ws.on('pong', function () {
         ws.isAlive = true;
     });
-    ws.on('message', function (message) {
-        if (message === "gamestate") {
-        }
-        ws.send("Received message: ".concat(message));
-    });
 });
 server.listen(process.env.PORT || WS_PORT, function () {
     console.log("Listening...");

@@ -29,14 +29,6 @@ wss.on('connection', (ws : ExtWebSocket) => {
     ws.on('pong', () => {
         ws.isAlive = true;
     });
-
-    ws.on('message', (message: string) => { 
-       if( message === "gamestate" ) {
-
-       }
-       
-       ws.send(`Received message: ${message}`);
-    });
 });
 
 server.listen(process.env.PORT || WS_PORT, () => {
