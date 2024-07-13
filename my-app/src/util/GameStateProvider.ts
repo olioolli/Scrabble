@@ -19,6 +19,8 @@ export const useGameState = () => {
 
     const [gameState, setGameState] = useState<GameState>(initialGameState);
 
+    const [serverUpdatePending, setServerUpdatePending] = useState(false)
+
     const copyState = useCallback( (): GameState => {
 
         const playerPoints = {};
@@ -52,6 +54,8 @@ export const useGameState = () => {
     }, []);
 
     const sendGameStateToBE = async (state: GameState) => {
+        console.log('afkakfj')
+        setServerUpdatePending(true)
         const resp = await axios.post(BE_URL + "/game", { game: state });
         setGameState(resp.data);
     };
@@ -60,9 +64,20 @@ export const useGameState = () => {
         const resp = await axios.get(BE_URL + "/newgame");
     };
 
+    const keepAliveInterval = 15000;
+
+    function startKeepAlive(client) {
+        setInterval(function() {
+            if (client.readyState === client.OPEN) {
+                client.send({});
+            }
+        }, keepAliveInterval);
+    }
+
     useEffect(() => {
 
         let client = new W3CWebSocket(BE_WS_URL);
+        startKeepAlive(client);
 
         client.onopen = () => {};
 
@@ -71,7 +86,11 @@ export const useGameState = () => {
             const newGameState = JSON.parse(message.data as string);
             if (newGameState)
                 setGameState(newGameState);
+
+            setServerUpdatePending(false)
         };
+
+        client.onerror = (error) => console.log(error)
 
         fetchGameStateFromBe();
     }, [fetchGameStateFromBe]);
@@ -203,6 +222,7 @@ export const useGameState = () => {
 
     return {
         gameState: gameState,
+        serverUpdatePending,
         setGameState: setGameState,
         fetchGameStateFromBe: fetchGameStateFromBe,
         moveLetterToHandFromPouch: moveLetterToHandFromPouch,

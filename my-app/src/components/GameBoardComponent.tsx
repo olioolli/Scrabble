@@ -14,6 +14,7 @@ import { PlayerInfoPopupComponent } from './PlayerInfoPopupComponent';
 export const GameBoardComponent = () => {
 
     const { gameState, 
+        serverUpdatePending,
         moveLetterFromHandToBoard, 
         getPlayers, 
         togglePlayerTurn, 
@@ -64,6 +65,7 @@ export const GameBoardComponent = () => {
                     setOpenWndPlayerName={setOpenWndPlayerName}></PlayerInfoPopupComponent>}
             <MainDiv>
                 {
+                    serverUpdatePending ? <InactivePlayerBlocker backgroundColor="762f2f" /> :
                     isCurrentPlayerActive() ? <></> : <InactivePlayerBlocker>Not your turn</InactivePlayerBlocker>
                 }
                 <div className='board'>
@@ -147,7 +149,7 @@ const InactivePlayerBlocker = styled.div`
   width: 100%;
   height: 100%;
   z-index: 10000;
-  background: #762f2f;
+  background: ${({ backgroundColor }) => backgroundColor || '#762f2f00'};
   position: absolute;
   top: 0px;
   left: 0px;

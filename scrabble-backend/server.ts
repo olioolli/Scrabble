@@ -55,7 +55,7 @@ const broadCastGameState = () => {
 
 // Handling GET / Request
 app.get('/', (req, res) => {
-    res.send('Welcome to typescript backend!');
+    res.send('Welcome to Scabble backend!');
 })
 
 // Server setup
