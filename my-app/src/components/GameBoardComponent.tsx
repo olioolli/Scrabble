@@ -65,8 +65,8 @@ export const GameBoardComponent = () => {
                     setOpenWndPlayerName={setOpenWndPlayerName}></PlayerInfoPopupComponent>}
             <MainDiv>
                 {
-                    serverUpdatePending ? <InactivePlayerBlocker backgroundColor="762f2f" /> :
-                    isCurrentPlayerActive() ? <></> : <InactivePlayerBlocker>Not your turn</InactivePlayerBlocker>
+                    serverUpdatePending ? <InactivePlayerBlocker /> :
+                    isCurrentPlayerActive() ? <></> : <InactivePlayerBlocker backgroundColor="#762f2f">Not your turn</InactivePlayerBlocker>
                 }
                 <div className='board'>
                     {gameState.board.map((x, y) => (

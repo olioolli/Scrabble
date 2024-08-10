@@ -54,7 +54,6 @@ export const useGameState = () => {
     }, []);
 
     const sendGameStateToBE = async (state: GameState) => {
-        console.log('afkakfj')
         setServerUpdatePending(true)
         const resp = await axios.post(BE_URL + "/game", { game: state });
         setGameState(resp.data);
@@ -82,6 +81,8 @@ export const useGameState = () => {
         client.onopen = () => {};
 
         client.onmessage = (message) => {
+
+            console.log('received message on ', new Date())
 
             const newGameState = JSON.parse(message.data as string);
             if (newGameState)
