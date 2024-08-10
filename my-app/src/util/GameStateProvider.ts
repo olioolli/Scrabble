@@ -94,6 +94,10 @@ export const useGameState = () => {
         client.onerror = (error) => console.log(error)
 
         fetchGameStateFromBe();
+
+        return () => {
+            client.close();
+        };
     }, [fetchGameStateFromBe]);
 
     const getPlayers = (): string[] => Object.keys(gameState.playerHands);
