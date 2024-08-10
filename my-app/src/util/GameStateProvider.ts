@@ -65,18 +65,9 @@ export const useGameState = () => {
 
     const keepAliveInterval = 15000;
 
-    function startKeepAlive(client) {
-        setInterval(function() {
-            if (client.readyState === client.OPEN) {
-                client.send({});
-            }
-        }, keepAliveInterval);
-    }
-
     useEffect(() => {
 
         let client = new W3CWebSocket(BE_WS_URL);
-        startKeepAlive(client);
 
         client.onopen = () => {};
 

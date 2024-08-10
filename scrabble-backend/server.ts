@@ -22,37 +22,14 @@ interface ExtWebSocket extends WebSocket {
     isAlive : boolean;
 }
 
-wss.on('connection', (ws : ExtWebSocket) => {
-
-    ws.isAlive = true;
-
-    ws.on('pong', () => {
-        ws.isAlive = true;
-    });
-});
-
 server.listen(process.env.PORT || WS_PORT, () => {
     console.log("Listening...");
 });
-
-setInterval(() => {
-    wss.clients.forEach((ws) => {
-        const extWs = ws as ExtWebSocket;
-        if (!extWs.isAlive) return extWs.terminate();
-        
-        extWs.isAlive = false;
-        extWs.ping(null, false);
-    });
-}, 10000);
 
 const broadCastGameState = () => {
     console.log('Broadcasting game')
     wss.clients.forEach((ws) => {
         const extWs = ws as ExtWebSocket;
-        if (!extWs.isAlive) {
-            console.log('WS not alive, skipping...')
-            return;
-        }
         console.log('sending game data through WS..')
         extWs.send(JSON.stringify(gameState));
     });
