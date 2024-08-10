@@ -66,16 +66,20 @@ setInterval(function () {
     });
 }, 10000);
 var broadCastGameState = function () {
+    console.log('Broadcasting game');
     wss.clients.forEach(function (ws) {
         var extWs = ws;
-        if (!extWs.isAlive)
+        if (!extWs.isAlive) {
+            console.log('WS not alive, skipping...');
             return;
+        }
+        console.log('sending game data through WS..');
         extWs.send(JSON.stringify(gameState));
     });
 };
 // Handling GET / Request
 app.get('/', function (req, res) {
-    res.send('Welcome to typescript backend!');
+    res.send('Welcome to Scabble backend!');
 });
 // Server setup
 app.listen(PORT, function () {
@@ -107,6 +111,7 @@ app.get("/isLoggedIn", function (req, res) {
     }
 });
 app.post("/game", function (req, res) {
+    console.log('/game: Game received');
     gameState = req.body.game;
     broadCastGameState();
     res.status(200).json(gameState);

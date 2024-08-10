@@ -93,6 +93,10 @@ export const useGameState = () => {
 
         client.onerror = (error) => console.log(error)
 
+        client.onclose = () => {
+            console.log('WebSocket closed, attempting to reconnect...');
+        };
+
         fetchGameStateFromBe();
 
         return () => {

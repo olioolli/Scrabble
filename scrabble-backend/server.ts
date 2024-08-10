@@ -46,9 +46,14 @@ setInterval(() => {
 }, 10000);
 
 const broadCastGameState = () => {
+    console.log('Broadcasting game')
     wss.clients.forEach((ws) => {
         const extWs = ws as ExtWebSocket;
-        if (!extWs.isAlive) return;
+        if (!extWs.isAlive) {
+            console.log('WS not alive, skipping...')
+            return;
+        }
+        console.log('sending game data through WS..')
         extWs.send(JSON.stringify(gameState));
     });
 };
@@ -91,6 +96,7 @@ app.get("/isLoggedIn", (req, res) => {
 });
 
 app.post("/game", (req, res) => {
+    console.log('/game: Game received')
     gameState = req.body.game;
     broadCastGameState();
     res.status(200).json(gameState);
