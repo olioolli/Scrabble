@@ -1,6 +1,5 @@
 // Importing module
 import express from 'express';
-import { send } from 'process';
 import cors from 'cors';
 import * as WebSocket from 'ws';
 import * as http from 'http';
@@ -36,7 +35,7 @@ const broadCastGameState = () => {
 };
 
 // Handling GET / Request
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
     res.send('Welcome to Scabble backend!');
 })
 
@@ -79,21 +78,21 @@ app.post("/game", (req, res) => {
     res.status(200).json(gameState);
 });
 
-app.get("/game", (req, res) => {
+app.get("/game", (_, res) => {
     res.send(JSON.stringify(gameState));
 });
 
-app.get("/users", (req, res) => {
+app.get("/users", (_, res) => {
     res.send(JSON.stringify(users));
 });
 
-app.get("/reset", (req, res) => {
+app.get("/reset", (_, res) => {
     gameState = createInitialGameState(false);
     users = [];
     res.send("Game reset");
 });
 
-app.get("/newgame", (req, res) => {
+app.get("/newgame", (_, res) => {
     gameState = createInitialGameState(true);
     broadCastGameState();
     res.send("New game started");
@@ -175,33 +174,6 @@ const createNewLettersTiles = (character: string, points : number, count : numbe
         retArr.push(createNewLetterTile(character,points,""));
     return retArr;
 }
-/*
-const pouchLetters = [
-    ...createNewLettersTiles("A",1,11),
-    ...createNewLettersTiles("D",7,1),
-    ...createNewLettersTiles("E",1,13),
-    ...createNewLettersTiles("G",8,1),
-    ...createNewLettersTiles("H",4,3),
-    ...createNewLettersTiles("I",1,10),
-    ...createNewLettersTiles("J",4,2),
-    ...createNewLettersTiles("K",2,4),
-    ...createNewLettersTiles("L",2,3),
-    ...createNewLettersTiles("M",3,2),
-    ...createNewLettersTiles("N",1,6),
-    ...createNewLettersTiles("O",2,8),
-    ...createNewLettersTiles("P",4,2),
-    ...createNewLettersTiles("R",4,4),
-    ...createNewLettersTiles("S",1,5),
-    ...createNewLettersTiles("T",1,6),
-    ...createNewLettersTiles("U",3,5),
-    ...createNewLettersTiles("V",4,2),
-    ...createNewLettersTiles("Y",4,2),
-    ...createNewLettersTiles("-",0,2),
-    ...createNewLettersTiles("Ä",2,3),
-    ...createNewLettersTiles("Ö",3,2),
-];
-*/
-
 
 const createPouchLetters = () => {
     return [

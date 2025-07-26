@@ -47,32 +47,13 @@ app.use((0, cors_1.default)());
 var server = http.createServer(app);
 //initialize the WebSocket server instance
 var wss = new WebSocket.Server({ server: server });
-wss.on('connection', function (ws) {
-    ws.isAlive = true;
-    ws.on('pong', function () {
-        ws.isAlive = true;
-    });
-});
 server.listen(process.env.PORT || WS_PORT, function () {
     console.log("Listening...");
 });
-setInterval(function () {
-    wss.clients.forEach(function (ws) {
-        var extWs = ws;
-        if (!extWs.isAlive)
-            return extWs.terminate();
-        extWs.isAlive = false;
-        extWs.ping(null, false);
-    });
-}, 10000);
 var broadCastGameState = function () {
     console.log('Broadcasting game');
     wss.clients.forEach(function (ws) {
         var extWs = ws;
-        if (!extWs.isAlive) {
-            console.log('WS not alive, skipping...');
-            return;
-        }
         console.log('sending game data through WS..');
         extWs.send(JSON.stringify(gameState));
     });
