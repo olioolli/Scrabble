@@ -24,9 +24,9 @@ body,
 .letterTile {
   position: relative;
   display: inline-block;
-  padding: 10px;
-  height: 20px;
-  width: 20px;
+  padding: 0.6vh;
+  height: 3vh;
+  width: 3vh;
   z-index: 9;
   text-align: center;
   border: 1px solid #d3d3d3;
@@ -36,7 +36,7 @@ body,
   box-shadow: 4px 4px 4px 0px rgb(0 0 0 / 69%);
   left: -2px;
   top: -13px;
-  font-size: 15px;
+  font-size: 2vh;
   font-weight: 700;
   color: #004b3f;
 }
@@ -73,7 +73,7 @@ body,
 }
 
 .letterPoint {
-  font-size: 11px;
+  font-size: 1.2vh;
   position: absolute;
   bottom: 1px;
   right: 4px;
@@ -83,8 +83,8 @@ body,
   border: 1px solid rgb(221 218 218 / 96%);
   text-align: center;
   padding: 4px;
-  width: 38px;
-  height: 38px;
+  width: 4vh;
+  height: 4vh;
   user-select: none;
 }
 
@@ -93,11 +93,9 @@ body,
   grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
   background-color: #2e4289;
   padding: 2px;
-  width: 718px;
   margin: auto;
   margin-top: 5px;
-  padding: 8px;
-  padding-right: 8px;
+  padding: 0.8vh;
   border-radius: 3px;
 }
 
