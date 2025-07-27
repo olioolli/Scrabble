@@ -6,7 +6,7 @@ import { LoginComponent } from './components/LoginComponent'
 import { API } from './api/api'
 
 function App() {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean|null> (null)
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -17,10 +17,14 @@ function App() {
     fetchUserData()
   }, [])
 
+  if (isUserLoggedIn === null) {
+    return null
+  }
+
   return (
     <Router>
       <Switch>
-        <Route path="/">{isUserLoggedIn === null ? <div>LOADING..</div> :isUserLoggedIn ? <MainView></MainView> : <LoginComponent />}</Route>
+        <Route path="/">{isUserLoggedIn ? <MainView></MainView> : <LoginComponent />}</Route>
       </Switch>
     </Router>
   )

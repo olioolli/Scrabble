@@ -108,7 +108,7 @@ export const HandComponent = (props: HandComponentProps) => {
 const Div = styled.div`
   margin-top: 10px;
   height: 6vh;
-  width: 23vw;
+  width: 31vh;
   background-color: #636a3f;
   z-index: 10000;
   padding-left: 8px;

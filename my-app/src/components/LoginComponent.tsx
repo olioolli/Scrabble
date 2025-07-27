@@ -1,19 +1,17 @@
 import styled from 'styled-components'
 import ScrabbleLogo from './ScrabbleLogo'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { login } from '../util/utils'
 import logo from './logo.png'
 import { STYLES } from '../util/styles'
 
 export const LoginComponent = () => {
   const usernameRef = useRef<HTMLInputElement>(null)
+  const [usernameText, setUsernameText] = useState<string | undefined>(undefined)
 
   const logUserIn = () => {
-    if (!usernameRef || !usernameRef.current) return
-
-    const username = (usernameRef.current as HTMLInputElement).value
-    if (username && username !== '') {
-      login(username)
+    if (usernameText && usernameText !== '') {
+      login(usernameText)
     }
   }
 
@@ -21,7 +19,9 @@ export const LoginComponent = () => {
     if (event.code === 'Enter') logUserIn()
   }
 
-  const isPlayButtonDisabled = usernameRef.current?.value !== ''
+  const handleOnChange = () => setUsernameText(usernameRef.current?.value)
+
+  const isPlayButtonDisabled = usernameText === undefined || usernameText === ''
 
   return (
     <LoginMainDiv>
@@ -32,6 +32,7 @@ export const LoginComponent = () => {
           ref={usernameRef}
           placeholder={'Insert username'}
           onKeyDown={handleKeyPress}
+          onChange={handleOnChange}
         ></TextField>
         <Button onClick={logUserIn} isDisabled={isPlayButtonDisabled}>
           Play
