@@ -1,0 +1,98 @@
+import styled from 'styled-components'
+import ScrabbleLogo from './ScrabbleLogo'
+import { useRef } from 'react'
+import { login } from '../util/utils'
+import logo from './logo.png'
+import { STYLES } from '../util/styles'
+
+export const LoginComponent = () => {
+  const usernameRef = useRef<HTMLInputElement>(null)
+
+  const logUserIn = () => {
+    if (!usernameRef || !usernameRef.current) return
+
+    const username = (usernameRef.current as HTMLInputElement).value
+    if (username && username !== '') {
+      login(username)
+    }
+  }
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.code === 'Enter') logUserIn()
+  }
+
+  const isPlayButtonDisabled = usernameRef.current?.value !== ''
+
+  return (
+    <LoginMainDiv>
+      <PlayerSelectContainer>
+        <img className="logo" src={logo} alt="Logo" width={'300px'} />
+        <TitleH2>Choose your username</TitleH2>
+        <TextField
+          ref={usernameRef}
+          placeholder={'Insert username'}
+          onKeyDown={handleKeyPress}
+        ></TextField>
+        <Button onClick={logUserIn} isDisabled={isPlayButtonDisabled}>
+          Play
+        </Button>
+      </PlayerSelectContainer>
+    </LoginMainDiv>
+  )
+}
+
+const LoginMainDiv = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 30px;
+`
+
+const TitleH2 = styled.h2`
+  font-weight: normal;
+  margin-top: 0px;
+`
+
+const Button = styled.button`
+    padding: 15px;
+    margin-top: 20px;
+    width: 150px;
+    border-radius: 25px;
+    background: ${STYLES.BUTTON_BG_COLOR};
+    color: ${STYLES.BUTTON_COLOR};
+    font-size: 14px;
+    cursor: ${(props) => (props.isDisabled ? 'not-allowed' : 'pointer')};
+    border: none;
+    font-weight: 700;
+    opacity: ${(props) => (props.isDisabled ? '0.5' : '1')};
+
+    &:hover {
+        background: ${(props) => (props.isDisabled ? STYLES.BUTTON_BG_COLOR : STYLES.BUTTON_COLOR)};
+        color: ${(props) => (props.isDisabled ? STYLES.BUTTON_COLOR : STYLES.BG_COLOR)};
+    }
+}
+`
+
+const TextField = styled.input`
+  padding: 8px;
+  border-radius: ${STYLES.BORDER_RADIUS_M};
+  border: none;
+  background: ${STYLES.INPUT_BG_COLOR};
+  color: ${STYLES.INPUT_COLOR};
+  text-align: center;
+`
+
+const PlayerSelectContainer = styled.div`
+  display: flex;
+  color: white;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  padding: 20px;
+  max-width: 300px;
+  border-radius: 8px;
+  background: ${STYLES.BG_COLOR};
+`

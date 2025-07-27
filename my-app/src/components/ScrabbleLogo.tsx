@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 function ScrabbleLogo() {
   return (
@@ -7,13 +7,13 @@ function ScrabbleLogo() {
       width="1000"
       height="282.503"
       version="1.1"
-      style= { {
-        transform: "scale(0.6)",
-        padding: "50px",
-        border: "1px #506483",
-        borderRadius: "8px",
-        background: "#081a1a",
-        borderStyle: "double"
+      style={{
+        maxWidth: '200px',
+        padding: '50px',
+        border: '1px #506483',
+        borderRadius: '8px',
+        background: '#081a1a',
+        borderStyle: 'double',
       }}
     >
       <defs>
@@ -299,7 +299,7 @@ function ScrabbleLogo() {
         </g>
       </g>
     </svg>
-  );
+  )
 }
 
-export default ScrabbleLogo;
+export default ScrabbleLogo

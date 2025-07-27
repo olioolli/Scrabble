@@ -1,45 +1,8 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+html {
+  margin: 0;
 }
 
 body {
-
-  height: 100%;
   background-color: #081313;
   display: flex;
   flex-direction: column;
@@ -47,23 +10,39 @@ body {
   align-items: center;
 }
 
-.letterTile {
+html,
+body,
+#root,
+.App {
+  height: 100%;
+}
 
-  position:relative;
+#root {
+  overflow: hidden;
+}
+
+.letterTile {
+  position: relative;
   display: inline-block;
-  padding:10px;
+  padding: 10px;
   height: 20px;
   width: 20px;
   z-index: 9;
   text-align: center;
   border: 1px solid #d3d3d3;
-  background-color: yellow;
-  cursor:pointer;
+  background-color: #efe8b7;
+  cursor: pointer;
   user-select: none;
   box-shadow: 4px 4px 4px 0px rgb(0 0 0 / 69%);
   left: -2px;
   top: -13px;
   font-size: 15px;
+  font-weight: 700;
+  color: #004b3f;
+}
+
+.letterTile:hover {
+  opacity: 0.5;
 }
 
 .letterTile-selected {
@@ -73,7 +52,7 @@ body {
 .letterTile-onBoard-mobile {
   width: 1rem;
   height: 1rem;
-  padding: 1px; 
+  padding: 1px;
   font-size: 0.8rem;
 }
 
@@ -94,13 +73,13 @@ body {
 }
 
 .letterPoint {
-	font-size: 11px;
-    position: absolute;
-    bottom: 1px;
-    right: 4px;
+  font-size: 11px;
+  position: absolute;
+  bottom: 1px;
+  right: 4px;
 }
 .grid-item {
-  background-color: rgb(27 108 7 / 65%);
+  background-color: #004b3f;
   border: 1px solid rgb(221 218 218 / 96%);
   text-align: center;
   padding: 4px;
@@ -124,31 +103,31 @@ body {
 
 .playerContainer {
   display: flex;
-    justify-content: space-evenly;
-    flex-direction: column;
-    border: 1px solid #ffffff;
-    padding: 5px;
-    margin-top: 10px;
-    border-radius: 4px;
-    background: #636a3f;
+  justify-content: space-evenly;
+  flex-direction: column;
+  border: 1px solid #ffffff;
+  padding: 5px;
+  margin-top: 10px;
+  border-radius: 4px;
+  background: #636a3f;
 }
 
 .rightPanel {
   position: absolute;
-    right: 10%;
-    top: 1px;
+  right: 10%;
+  top: 1px;
 }
 
 @media only screen and (max-width: 600px) {
   .grid-item {
     width: 1rem;
     height: 1rem;
-    padding:2px;
+    padding: 2px;
   }
 
   .board {
     width: 20rem;
-    padding:3px 13px 3px 3px;
+    padding: 3px 13px 3px 3px;
   }
 
   .playerContainer {
@@ -174,31 +153,24 @@ body {
 }
 
 .grid-item-double-word {
-
-	background-color: #ffc0cb7a;
+  background-color: #ffc0cb7a;
 }
-.grid-item-double-word:before{
-	
-	content: '2xWord';
-	font-size:11px;
+.grid-item-double-word:before {
+  content: '2xWord';
+  font-size: 11px;
 }
 .grid-item-triple-word {
-
-	background-color: red;
+  background-color: red;
 }
 .grid-item-double-letter {
-
-	background-color: cyan;
+  background-color: cyan;
 }
 .grid-item-triple-letter {
-
-	background-color: blue;
+  background-color: blue;
 }
 .grid-item-center {
-
-	background-color: red;
+  background-color: red;
 }
 .grid-item-highlight {
-	
-	background-color: cyan;
+  background-color: cyan;
 }
