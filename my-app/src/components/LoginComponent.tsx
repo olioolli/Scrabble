@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { login } from '../util/utils'
 import logo from './logo.png'
 import { STYLES } from '../util/styles'
+import { Button } from './Button'
 
 export const LoginComponent = () => {
   const usernameRef = useRef<HTMLInputElement>(null)
@@ -34,9 +35,7 @@ export const LoginComponent = () => {
           onKeyDown={handleKeyPress}
           onChange={handleOnChange}
         ></TextField>
-        <Button onClick={logUserIn} isDisabled={isPlayButtonDisabled}>
-          Play
-        </Button>
+        <Button onClick={logUserIn} isDisabled={isPlayButtonDisabled} text={'Play'} />
       </PlayerSelectContainer>
     </LoginMainDiv>
   )
@@ -55,26 +54,6 @@ const LoginMainDiv = styled.div`
 const TitleH2 = styled.h2`
   font-weight: normal;
   margin-top: 0px;
-`
-
-const Button = styled.button`
-    padding: 15px;
-    margin-top: 20px;
-    width: 150px;
-    border-radius: 25px;
-    background: ${STYLES.BUTTON_BG_COLOR};
-    color: ${STYLES.BUTTON_COLOR};
-    font-size: 14px;
-    cursor: ${(props) => (props.isDisabled ? 'not-allowed' : 'pointer')};
-    border: none;
-    font-weight: 700;
-    opacity: ${(props) => (props.isDisabled ? '0.5' : '1')};
-
-    &:hover {
-        background: ${(props) => (props.isDisabled ? STYLES.BUTTON_BG_COLOR : STYLES.BUTTON_COLOR)};
-        color: ${(props) => (props.isDisabled ? STYLES.BUTTON_COLOR : STYLES.BG_COLOR)};
-    }
-}
 `
 
 const TextField = styled.input`

@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import { BoardTileComponent, TileDropType } from './BoardTileComponent';
-import { HandComponent } from './HandComponent';
-import { PouchComponent } from './PouchComponent';
-import { LetterTile } from '../../../scrabble-backend/server';
-import { getCurrentPlayerName, isMobileScreenWidth } from '../util/utils';
-import { useGameState } from '../util/GameStateProvider';
-import { useCallback } from 'react';
-import { PlayerInfo } from './PlayerInfoComponent';
-import { DialogComponent } from './DialogComponent';
-import { PlayerInfoPopupComponent } from './PlayerInfoPopupComponent';
+import { useState } from 'react'
+import styled from 'styled-components'
+import { BoardTileComponent, TileDropType } from './BoardTileComponent'
+import { HandComponent } from './HandComponent'
+import { PouchComponent } from './PouchComponent'
+import { LetterTile } from '../../../scrabble-backend/server'
+import { getCurrentPlayerName, isMobileScreenWidth } from '../util/utils'
+import { useGameState } from '../util/GameStateProvider'
+import { useCallback } from 'react'
+import { PlayerInfo } from './PlayerInfoComponent'
+import { DialogComponent } from './DialogComponent'
+import { Button } from './Button'
 
 export const GameBoardComponent = () => {
   const {
@@ -23,13 +23,10 @@ export const GameBoardComponent = () => {
     moveLetterFromBoardToBoard,
     moveLetterFromBoardToHand,
     sendNewGameRequest,
-  } = useGameState();
+  } = useGameState()
 
-  const [isPopupVisible, setPopupVisible] = useState(false);
-  const [selectedLetterTile, setSelectedLetterTile] = useState<LetterTile | undefined>();
-  const [openWndPlayerName, setOpenWndPlayerName] = useState<string | undefined>();
-
-  const isMobile = isMobileScreenWidth();
+  const [isPopupVisible, setPopupVisible] = useState(false)
+  const [selectedLetterTile, setSelectedLetterTile] = useState<LetterTile | undefined>()
 
   const handleLetterTileDrop = async (
     letterTile: LetterTile,
@@ -37,38 +34,30 @@ export const GameBoardComponent = () => {
     x: number,
     y: number
   ) => {
-    if (dropType === TileDropType.HAND_TO_POUCH) await moveLetterToPouchFromHand(letterTile);
+    if (dropType === TileDropType.HAND_TO_POUCH) await moveLetterToPouchFromHand(letterTile)
     else if (dropType === TileDropType.HAND_TO_BOARD)
-      await moveLetterFromHandToBoard(letterTile, x, y);
-    else if (dropType == TileDropType.BOARD_TO_HAND) await moveLetterFromBoardToHand(letterTile);
-    else await moveLetterFromBoardToBoard(letterTile, x, y);
+      await moveLetterFromHandToBoard(letterTile, x, y)
+    else if (dropType == TileDropType.BOARD_TO_HAND) await moveLetterFromBoardToHand(letterTile)
+    else await moveLetterFromBoardToBoard(letterTile, x, y)
 
-    setSelectedLetterTile(undefined);
-  };
+    setSelectedLetterTile(undefined)
+  }
 
   const handleEndTurnClicked = useCallback(async () => {
-    await togglePlayerTurn();
-  }, [togglePlayerTurn]);
+    await togglePlayerTurn()
+  }, [togglePlayerTurn])
 
   const isCurrentPlayerActive = useCallback(() => {
-    return getCurrentPlayerName() === gameState.turnOfPlayer;
-  }, [gameState, getCurrentPlayerName]);
+    return getCurrentPlayerName() === gameState.turnOfPlayer
+  }, [gameState, getCurrentPlayerName])
 
   const handlePointsUpdated = async (playerName: string, newPoints: number) => {
-    await updatePlayerPoints(playerName, newPoints);
-  };
+    await updatePlayerPoints(playerName, newPoints)
+  }
 
   return (
-    <div>
-      {openWndPlayerName && (
-        <PlayerInfoPopupComponent
-          pointsUpdated={handlePointsUpdated}
-          name={openWndPlayerName}
-          points={gameState.playerPoints[openWndPlayerName]}
-          setOpenWndPlayerName={setOpenWndPlayerName}
-        ></PlayerInfoPopupComponent>
-      )}
-      <MainDiv>
+    <>
+      <MainContainer>
         {serverUpdatePending ? (
           <InactivePlayerBlocker />
         ) : isCurrentPlayerActive() ? (
@@ -76,66 +65,74 @@ export const GameBoardComponent = () => {
         ) : (
           <InactivePlayerBlocker backgroundColor="#762f2f">Not your turn</InactivePlayerBlocker>
         )}
-        <div className="board">
-          {gameState.board.map((x, y) =>
-            x.map((tile, i) => (
-              <BoardTileComponent
-                key={i}
-                letterTile={tile.letterTile}
-                tileXPos={y}
-                tileYPos={i}
+        <PlayAreacontainer>
+          <BoardAndHandContainer>
+            <div className="board">
+              {gameState.board.map((x, y) =>
+                x.map((tile, i) => (
+                  <BoardTileComponent
+                    key={i}
+                    letterTile={tile.letterTile}
+                    tileXPos={y}
+                    tileYPos={i}
+                    tileDropped={handleLetterTileDrop}
+                    selectedLetterTile={selectedLetterTile}
+                    setSelectedLetterTile={setSelectedLetterTile}
+                    tileType={tile.tileType}
+                  ></BoardTileComponent>
+                ))
+              )}
+            </div>
+            <HandAndPouchContainer>
+              <HandComponent
                 tileDropped={handleLetterTileDrop}
                 selectedLetterTile={selectedLetterTile}
                 setSelectedLetterTile={setSelectedLetterTile}
-                tileType={tile.tileType}
-              ></BoardTileComponent>
-            ))
-          )}
-        </div>
-
-        <div className="rightPanel">
-          <div className="playerContainer">
-            {getPlayers().map((player) => (
-              <PlayerInfo
-                isActive={gameState.turnOfPlayer === player}
-                key={player}
-                points={gameState.playerPoints[player]}
-                name={player}
-                pointsUpdated={handlePointsUpdated}
-                playerInfoClicked={(playerName) => setOpenWndPlayerName(playerName)}
-              ></PlayerInfo>
-            ))}
+                letters={
+                  gameState.playerHands[getCurrentPlayerName()] !== undefined
+                    ? gameState.playerHands[getCurrentPlayerName()]
+                    : []
+                }
+              />
+              <PouchComponent
+                letters={gameState.pouchLetters !== undefined ? gameState.pouchLetters : []}
+                tileDropped={handleLetterTileDrop}
+                selectedLetterTile={selectedLetterTile}
+                setSelectedLetterTile={setSelectedLetterTile}
+              />
+            </HandAndPouchContainer>
+          </BoardAndHandContainer>
+          <div className="rightPanel">
+            <div className="playerContainer">
+              {getPlayers().map((player) => (
+                <PlayerInfo
+                  isActive={gameState.turnOfPlayer === player}
+                  key={player}
+                  points={gameState.playerPoints[player]}
+                  name={player}
+                  pointsUpdated={handlePointsUpdated}
+                ></PlayerInfo>
+              ))}
+            </div>
+            <div className="rightPanelButtonContainer">
+              <Button
+                onClick={handleEndTurnClicked}
+                isDisabled={false}
+                text={'End turn'}
+                variant="small"
+              ></Button>
+              <Button
+                onClick={() => {
+                  setPopupVisible(true)
+                }}
+                isDisabled={false}
+                text={'New game'}
+                variant="small"
+              ></Button>
+            </div>
           </div>
-          <div className="rightPanelButtonContainer">
-            <EndTurnButton onClick={handleEndTurnClicked}>End turn</EndTurnButton>
-            <EndTurnButton
-              onClick={() => {
-                setPopupVisible(true);
-              }}
-            >
-              New game
-            </EndTurnButton>
-          </div>
-        </div>
-        <BottomContainer mobileMode={isMobile}>
-          <HandComponent
-            tileDropped={handleLetterTileDrop}
-            selectedLetterTile={selectedLetterTile}
-            setSelectedLetterTile={setSelectedLetterTile}
-            letters={
-              gameState.playerHands[getCurrentPlayerName()] !== undefined
-                ? gameState.playerHands[getCurrentPlayerName()]
-                : []
-            }
-          />
-          <PouchComponent
-            letters={gameState.pouchLetters !== undefined ? gameState.pouchLetters : []}
-            tileDropped={handleLetterTileDrop}
-            selectedLetterTile={selectedLetterTile}
-            setSelectedLetterTile={setSelectedLetterTile}
-          />
-        </BottomContainer>
-      </MainDiv>
+        </PlayAreacontainer>
+      </MainContainer>
       {isPopupVisible ? (
         <DialogComponent
           text={'Really start a new game?'}
@@ -143,35 +140,39 @@ export const GameBoardComponent = () => {
           cancelText={'Cancel'}
           cancelClicked={() => setPopupVisible(false)}
           okClicked={() => {
-            sendNewGameRequest();
-            setPopupVisible(false);
+            sendNewGameRequest()
+            setPopupVisible(false)
           }}
         ></DialogComponent>
       ) : (
         <></>
       )}
-    </div>
-  );
-};
+    </>
+  )
+}
 
-const EndTurnButton = styled.button`
-  width: 100px;
-  padding: 5px;
-  height: 50px;
-  background: #eef1e3;
-  border-radius: 4px;
-  margin-top: 10px;
-  padding: 10px;
-  margin-left: 10px;
-  font-weight: bold;
-  background-color: #eef1e3;
-`;
+const HandAndPouchContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`
 
-const MainDiv = styled.div`
+const BoardAndHandContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
+`
+
+const PlayAreacontainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+`
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 const InactivePlayerBlocker = styled.div`
   width: 100%;
@@ -182,7 +183,7 @@ const InactivePlayerBlocker = styled.div`
   top: 0px;
   left: 0px;
   opacity: 0.6;
-`;
+`
 
 const BottomContainer = styled.div`
   display: flex;
@@ -191,4 +192,4 @@ const BottomContainer = styled.div`
   flex-wrap: wrap;
   flex-direction: ${(props) => (props.mobileMode ? 'column' : 'initial')};
   align-items: ${(props) => (props.mobileMode ? 'center' : 'initial')};
-`;
+`

@@ -35,7 +35,7 @@ body,
   user-select: none;
   box-shadow: 4px 4px 4px 0px rgb(0 0 0 / 69%);
   left: -2px;
-  top: -13px;
+  top: -1.5vh;
   font-size: 2vh;
   font-weight: 700;
   color: #004b3f;
@@ -61,7 +61,7 @@ body,
 }
 
 .letterTileTopFix {
-  top: -27px;
+  top: -2.75vh;
 }
 
 .letterTile .letterTileTopFix .letterTile-onBoard-mobile {
@@ -111,9 +111,9 @@ body,
 }
 
 .rightPanel {
-  position: absolute;
+  /*position: absolute;
   right: 10%;
-  top: 1px;
+  top: 1px;*/
 }
 
 @media only screen and (max-width: 600px) {
