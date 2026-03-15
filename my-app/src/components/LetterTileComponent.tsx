@@ -36,13 +36,16 @@ export const LetterTileComponent = (props : LetterProps) => {
     }
 
     const handleDragDrop = (e) => {
-        e.preventDefault();
-
-        const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
-        const letterTile = letterTransferData.letterTile;
-
-        if( props.tileDropped ) 
+        if (props.tileDropped) {
+            e.preventDefault();
+    
+            const letterTransferData = JSON.parse(e.dataTransfer.getData("text/plain")) as LetterTileTransferData;
+            const letterTile = letterTransferData.letterTile;
+    
             props.tileDropped(letterTile, props.letter);
+        } else {
+            e.stopPropagation();
+        }
     }
 
     const handleClick = () => {
