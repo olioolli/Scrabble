@@ -9,7 +9,6 @@ import { useGameState } from '../util/GameStateProvider'
 import { useCallback } from 'react'
 import { PlayerInfo } from './PlayerInfoComponent'
 import { DialogComponent } from './DialogComponent'
-import { Button } from './Button'
 
 export const GameBoardComponent = () => {
   const {
@@ -114,22 +113,18 @@ export const GameBoardComponent = () => {
                 ></PlayerInfo>
               ))}
             </div>
-            <div className="rightPanelButtonContainer">
-              <Button
+            <RightPanelButtonContainer>
+              <ModernButton
                 onClick={handleEndTurnClicked}
-                isDisabled={false}
-                text={'End turn'}
-                variant="small"
-              ></Button>
-              <Button
+                disabled={false}
+              >End turn</ModernButton>
+              <ModernButton
                 onClick={() => {
                   setPopupVisible(true)
                 }}
-                isDisabled={false}
-                text={'New game'}
-                variant="small"
-              ></Button>
-            </div>
+                disabled={false}
+              >New game</ModernButton>
+            </RightPanelButtonContainer>
           </div>
         </PlayAreacontainer>
       </MainContainer>
@@ -150,6 +145,34 @@ export const GameBoardComponent = () => {
     </>
   )
 }
+
+const RightPanelButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const ModernButton = styled.button`
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: #365050;
+  color: white;
+  padding: 12px 16px;
+  font-size: 14px;
+
+  &:hover {
+    background-color: #4a6a6a;
+  }
+
+  &:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+  }
+`;
 
 const HandAndPouchContainer = styled.div`
   display: flex;
@@ -185,11 +208,3 @@ const InactivePlayerBlocker = styled.div`
   opacity: 0.6;
 `
 
-const BottomContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  flex-wrap: wrap;
-  flex-direction: ${(props) => (props.mobileMode ? 'column' : 'initial')};
-  align-items: ${(props) => (props.mobileMode ? 'center' : 'initial')};
-`

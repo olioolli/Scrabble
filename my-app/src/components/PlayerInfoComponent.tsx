@@ -1,183 +1,135 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react'
-import styled from 'styled-components'
-import { isMobileScreenWidth } from '../util/utils'
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { isMobileScreenWidth } from '../util/utils';
 
 export type PlayerInfoProps = {
-  pointsUpdated: (playerName: string, newPointValue: number) => void
-  isActive: boolean
-  name: string
-  points: number
-  playerInfoClicked?: (playerName: string) => void
-  showBigControls?: boolean
-  setOpenWndPlayerName?: React.Dispatch<React.SetStateAction<string | undefined>>
-}
+  pointsUpdated: (playerName: string, newPointValue: number) => void;
+  isActive: boolean;
+  name: string;
+  points: number;
+  playerInfoClicked?: (playerName: string) => void;
+  showBigControls?: boolean;
+  setOpenWndPlayerName?: React.Dispatch<React.SetStateAction<string | undefined>>;
+};
 
 export const PlayerInfo = (props: PlayerInfoProps) => {
-  const [points, setPoints] = useState(0)
-  const [newPoints, setNewPoints] = useState(0)
+  const [points, setPoints] = useState(0);
+  const [newPoints, setNewPoints] = useState(0);
 
-  const mobile = isMobileScreenWidth()
+  const mobile = isMobileScreenWidth();
 
   useEffect(() => {
-    setPoints(props.points)
-  }, [props.points])
+    setPoints(props.points);
+  }, [props.points]);
 
   const handlePointsChanged = (change: number) => {
-    setNewPoints(change + newPoints)
-  }
+    setNewPoints((prev) => prev + change);
+  };
 
-  const handeAddPoints = () => {
-    props.pointsUpdated(props.name, points + newPoints)
-    setNewPoints(0)
-    if (props.setOpenWndPlayerName) props.setOpenWndPlayerName(undefined)
-  }
+  const handleAddPoints = () => {
+    props.pointsUpdated(props.name, points + newPoints);
+    setNewPoints(0);
+    if (props.setOpenWndPlayerName) props.setOpenWndPlayerName(undefined);
+  };
 
-  const showControls = props.showBigControls || !mobile
-  const showBigControls = props.showBigControls ? props.showBigControls : false
+  const showControls = props.showBigControls || !mobile;
 
-  const getNewPointsText = () => {
-    if (newPoints > 0) return '+' + newPoints
-
-    return '' + newPoints
-  }
-
-  const getPointButtonComponent = (isPlusBtn: boolean) => {
-    const sign = isPlusBtn ? '+' : '-'
-
-    return showBigControls ? (
-      <MobileButton
-        mobileControls={showBigControls}
-        onClick={() => handlePointsChanged(isPlusBtn ? 1 : -1)}
-      >
-        {sign}
-      </MobileButton>
-    ) : (
-      <PointButton
-        mobileControls={showBigControls}
-        onClick={() => handlePointsChanged(isPlusBtn ? 1 : -1)}
-      >
-        {sign}
-      </PointButton>
-    )
-  }
-
-  const getSendButton = () => {
-    if (showBigControls)
-      return (
-        <MobileSendPointsButton mobileControls={showBigControls} onClick={handeAddPoints}>
-          Add
-        </MobileSendPointsButton>
-      )
-    else
-      return (
-        <SendPointsButton mobileControls={showBigControls} onClick={handeAddPoints}>
-          Add
-        </SendPointsButton>
-      )
-  }
+  const newPointsDisplay = newPoints > 0 ? `+${newPoints}` : `${newPoints}`;
 
   return (
-    <FlexDivRow
-      mobileControls={mobile}
+    <PlayerCard 
+      isActive={props.isActive} 
       onClick={() => mobile && props.playerInfoClicked && props.playerInfoClicked(props.name)}
     >
-      <PlayerContainer mobileControls={showBigControls}>
-        <PlayerNameDiv>{props.name}</PlayerNameDiv>
-        <div>{points + 'pts'}</div>
-        {showBigControls && (
-          <NewPointsDiv mobileControls={showBigControls}>{getNewPointsText()}</NewPointsDiv>
-        )}
-      </PlayerContainer>
+      <PlayerDetails>
+        <PlayerName>{props.name}</PlayerName>
+        <PlayerScore>{points} pts</PlayerScore>
+      </PlayerDetails>
       {showControls && (
-        <>
-          {!showBigControls && (
-            <NewPointsDiv mobileControls={showBigControls}>{getNewPointsText()}</NewPointsDiv>
-          )}
-          <FlexDivCol>
-            {getPointButtonComponent(true)}
-            {getPointButtonComponent(false)}
-          </FlexDivCol>
-          {getSendButton()}
-        </>
+        <PointEditor showBigControls={props.showBigControls}>
+          <AdjustButton onClick={() => handlePointsChanged(-1)}>-</AdjustButton>
+          <NewPointsDiv>{newPointsDisplay}</NewPointsDiv>
+          <AdjustButton onClick={() => handlePointsChanged(1)}>+</AdjustButton>
+          <AddButton onClick={handleAddPoints}>Add</AddButton>
+        </PointEditor>
       )}
-    </FlexDivRow>
-  )
-}
+    </PlayerCard>
+  );
+};
 
-const SendPointsButton = styled.button`
-  font-weight: bold;
-`
+const PlayerCard = styled.div<{ isActive: boolean }>`
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  border: 2px solid ${(props) => (props.isActive ? '#365050' : '#e0e0e0')};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
+  transition: all 0.2s ease-in-out;
 
-const MobileSendPointsButton = styled.button`
-  font-weight: bold;
-  width: 4rem;
-  margin-left: 1rem;
-  background-color: #365050;
-  border-radius: 5px;
-  border-style: solid;
-  margin-top: 6px;
-  font-weight: bold;
-`
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
 
-const PlayerNameDiv = styled.div`
+const PlayerDetails = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const PlayerName = styled.div`
   font-weight: bold;
-  text-decoration: underline;
+  font-size: 1.2em;
   color: #2e4289;
-`
+`;
+
+const PlayerScore = styled.div`
+  font-size: 1.1em;
+  font-weight: 500;
+`;
+
+const PointEditor = styled.div<{ showBigControls?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: ${(props) => (props.showBigControls ? '12px' : '8px')};
+`;
 
 const NewPointsDiv = styled.div`
-  background-color: ${(props) => (props.mobileControls ? '#96a9a9' : 'none')};
-  padding-top: 20px;
-  padding-left: 5px;
-  padding-right: 13px;
-  border: 1px;
-  width: ${(props) => (props.mobileControls ? '2rem' : '10px')};
-  border-style: inset;
-  border-color: #eef1e3;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
-  height: 37px;
-  margin-top: 2px;
-  border-style: inset;
+  background-color: #eef1e3;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-weight: bold;
+  min-width: 40px;
   text-align: center;
-  border-radius: 5px;
+`;
+
+const StyledButton = styled.button`
   border: none;
-  padding-left: 11px;
-  font-weight: bold;
-  margin-right: ${(props) => (props.mobileControls ? 'initial' : '12px')};
-`
-
-const PlayerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-const PointButton = styled.button`
-  height: 100%;
-`
-
-const MobileButton = styled.button`
-  width: 4rem;
-  height: 4rem;
-  background-color: #365050;
   border-radius: 5px;
-  border-style: solid;
-  margin-top: 6px;
   font-weight: bold;
-  font-size: 22px;
-  font-family: fantasy;
-`
-
-const FlexDivRow = styled.div`
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: #365050;
+  color: white;
   display: flex;
-  flex-direction: row;
-  padding: 10px;
-  border-top: ${(props) => (props.mobileControls ? 'none' : '1px solid white')};
-  border-top-style: ${(props) => (props.mobileControls ? 'none' : 'inset')};
-`
+  justify-content: center;
+  align-items: center;
 
-const FlexDivCol = styled.div`
-  display: flex;
-  flex-direction: column;
-`
+  &:hover {
+    background-color: #4a6a6a;
+  }
+`;
+
+const AdjustButton = styled(StyledButton)`
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
+`;
+
+const AddButton = styled(StyledButton)`
+  padding: 8px 16px;
+  margin-left: auto; /* Pushes the button to the right */
+`;
